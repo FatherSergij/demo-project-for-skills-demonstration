@@ -1,0 +1,29 @@
+---
+- name: Run in master
+  block:
+  - name: Initialization cluster k8s on master and extract 2 last line for join workers
+    shell: kubeadm init --pod-network-cidr=10.244.0.0/16 --cri-socket=unix:///var/run/crio/crio.sock | tail -2
+    register: result
+  
+  - name: Print output to file
+    copy:
+      content: "{{ result.stdout }}"
+      dest: "{{ role_path }}/files/join_for_workers.sh"
+      mode: '0775'
+    delegate_to: localhost
+  
+  #if run with become: yes then %HOME will be /root
+  - name: Create config for kubelet
+    become: false
+    shell: |
+      mkdir -p $HOME/.kube
+      sudo cp /etc/kubernetes/admin.conf $HOME/.kube/config
+      sudo chown ubuntu:ubuntu $HOME/.kube/config
+  
+  - name: Copy config from master to localhost for workers
+    become: false
+    fetch:
+      src: $HOME/.kube/config
+      dest: "{{ role_path }}/files/config"
+      flat: yes
+  when: "'k8s_master' in group_names"         

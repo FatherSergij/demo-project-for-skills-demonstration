@@ -1,0 +1,20 @@
+---
+- name: Run in workers
+  block:
+  - name: Create directory
+    become: false
+    file:
+      path: $HOME/.kube/
+      state: directory
+      mode: '0755'
+  
+  - name: Copy config to workers from localhost for workers 
+    become: false
+    copy:
+      src: config
+      dest: $HOME/.kube/config
+  
+  - name: Init workers
+    script: 
+      cmd: "{{ role_path }}/files/join_for_workers.sh"
+  when: "'k8s_workers' in group_names"
