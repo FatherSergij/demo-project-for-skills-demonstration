@@ -16,5 +16,5 @@
   
   - name: Init workers
     script: 
-      cmd: "{{ role_path }}/files/join_for_workers.sh"
+      cmd: "{{ role_path }}/files/join_for_workers.sh" #role_path - system variable
   when: "'k8s_workers' in group_names"

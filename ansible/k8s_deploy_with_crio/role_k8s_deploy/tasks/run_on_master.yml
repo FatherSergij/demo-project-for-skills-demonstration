@@ -8,7 +8,7 @@
   - name: Print output to file
     copy:
       content: "{{ result.stdout }}"
-      dest: "{{ role_path }}/files/join_for_workers.sh"
+      dest: "{{ role_path }}/files/join_for_workers.sh" #role_path - system variable
       mode: '0775'
     delegate_to: localhost
   
