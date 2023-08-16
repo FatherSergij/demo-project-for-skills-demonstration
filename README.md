@@ -1,2 +1,1 @@
-# terraform_ansible_deploy_k8s
-# terraform_ansible_deploy_k8s
+# Deploy cluster k8s using terraform and ansible
