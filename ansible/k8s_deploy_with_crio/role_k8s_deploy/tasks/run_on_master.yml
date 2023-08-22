@@ -5,7 +5,7 @@
     shell: kubeadm init --pod-network-cidr=10.244.0.0/16 --cri-socket=unix:///var/run/crio/crio.sock | tail -2
     register: result
   
-  - name: Print output to file
+  - name: Print output to file for run one in workers
     copy:
       content: "{{ result.stdout }}"
       dest: "{{ role_path }}/files/join_for_workers.sh" #role_path - system variable
