@@ -103,11 +103,11 @@ resource "aws_instance" "instance_master" {
     volume_size = 8
     volume_type = "gp3"
     tags = {
-      Name = "ebs_master_${var.my_name}"
+      Name = "${var.my_name}_ebs_master"
     }
   }
   tags = {
-    Name = "instance_master_${var.my_name}"
+    Name = "${var.my_name}_master"
   }
 }
 
@@ -123,11 +123,11 @@ resource "aws_instance" "instance_workers" {
     volume_size = 8
     volume_type = "gp3"
     tags = {
-      Name = "ebs_worker_${var.my_name}_0${count.index + 1}"
+      Name = "${var.my_name}_ebs_worker_0${count.index + 1}"
     }
   }
   tags = {
-    Name = "instance_worker${var.my_name}_0${count.index + 1}"
+    Name = "${var.my_name}_worker_0${count.index + 1}"
   }
 }
 

@@ -6,6 +6,14 @@ variable "path_for_ansible" {
   default = "ansible/k8s_deploy_with_crio/"
 }
 
+variable "name_group_master" {
+  default = "ansible_master"
+}
+
+variable "name_group_workers" {
+  default = "ansible_workers"
+}
+
 variable "tag" {
   type = map(string)
   default = {
