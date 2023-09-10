@@ -2,6 +2,8 @@ variable "vpc_id" {}
 
 variable "subnet_id" {}
 
+variable "port" {}
+
 variable "my_name" {}
 
 variable "nm_worker" {}

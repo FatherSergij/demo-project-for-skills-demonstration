@@ -1,17 +1,34 @@
+data "aws_ami" "ami_latest" {
+  most_recent = true
+  owners = ["amazon"]
+  filter {
+    name   = "virtualization-type"
+    values = ["hvm"]
+  }
+  filter {
+    name   = "architecture"
+    values = ["x86_64"]
+  }
+  filter {
+    name   = "name"
+    values = ["ubuntu/images/*20.04*"]
+  }
+}
+
 resource "aws_iam_policy" "policy_master" {
-  name        = "policy_master"
-  path        = "/"
+  name   = "policy_master"
+  path   = "/"
   policy = file("templates/policy_master.json")
   tags = {
-    Name        = "policy_master_${var.my_name}"
-  }  
+    Name = "policy_master_${var.my_name}"
+  }
 }
 
 resource "aws_iam_role" "role_master" {
-  name = "role_master"
+  name               = "role_master"
   assume_role_policy = file("templates/role.json")
   tags = {
-    Name        = "role_master_${var.my_name}"
+    Name = "role_master_${var.my_name}"
   }
 }
 
@@ -21,19 +38,19 @@ resource "aws_iam_role_policy_attachment" "attach_policy_master_role_master" {
 }
 
 resource "aws_iam_policy" "policy_worker" {
-  name        = "policy_worker"
-  path        = "/"
+  name   = "policy_worker"
+  path   = "/"
   policy = file("templates/policy_worker.json")
   tags = {
-    Name        = "policy_worker_${var.my_name}"
-  }  
+    Name = "policy_worker_${var.my_name}"
+  }
 }
 
 resource "aws_iam_role" "role_worker" {
-  name = "role_worker"
+  name               = "role_worker"
   assume_role_policy = file("templates/role.json")
   tags = {
-    Name        = "role_worker_${var.my_name}"
+    Name = "role_worker_${var.my_name}"
   }
 }
 
@@ -48,7 +65,7 @@ resource "aws_security_group" "sg" {
   vpc_id      = var.vpc_id
 
   /*dynamic "ingress" {
-    for_each = ["80", "22"]//, "6443"]
+    for_each = var.port
     content {
       from_port        = ingress.value
       to_port          = ingress.value
@@ -58,17 +75,17 @@ resource "aws_security_group" "sg" {
   }*/
 
   ingress {
-    from_port        = 0
-    to_port          = 0
-    protocol         = "-1"
-    cidr_blocks      = ["0.0.0.0/0"]
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
   }
 
   egress {
-    from_port        = 0
-    to_port          = 0
-    protocol         = "-1"
-    cidr_blocks      = ["0.0.0.0/0"]
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
   }
 
   tags = {
@@ -87,21 +104,21 @@ resource "aws_key_pair" "generated_key" {
 }
 
 resource "local_file" "local_key_pair" {
-  filename = "${var.path_for_ansible}key.pem"
+  filename        = "${var.path_for_ansible}key.pem"
   file_permission = "0400"
-  content = tls_private_key.private_key.private_key_pem
+  content         = tls_private_key.private_key.private_key_pem
 }
 
 resource "aws_instance" "instance_master" {
-  ami           = "ami-0989fb15ce71ba39e"
-  instance_type = var.instance_type_master
-  subnet_id     = var.subnet_id
+  ami                    = data.aws_ami.ami_latest.id
+  instance_type          = var.instance_type_master
+  subnet_id              = var.subnet_id
   vpc_security_group_ids = [aws_security_group.sg.id]
-  key_name      = aws_key_pair.generated_key.key_name
+  key_name               = aws_key_pair.generated_key.key_name
   root_block_device {
     delete_on_termination = true
-    volume_size = 8
-    volume_type = "gp3"
+    volume_size           = 8
+    volume_type           = "gp3"
     tags = {
       Name = "${var.my_name}_ebs_master"
     }
@@ -112,16 +129,16 @@ resource "aws_instance" "instance_master" {
 }
 
 resource "aws_instance" "instance_workers" {
-  count = var.nm_worker
-  ami           = "ami-0989fb15ce71ba39e"
-  instance_type = var.instance_type_worker
-  subnet_id     = var.subnet_id
+  count                  = var.nm_worker
+  ami                    = "ami-0989fb15ce71ba39e"
+  instance_type          = var.instance_type_worker
+  subnet_id              = var.subnet_id
   vpc_security_group_ids = [aws_security_group.sg.id]
-  key_name      = aws_key_pair.generated_key.key_name
+  key_name               = aws_key_pair.generated_key.key_name
   root_block_device {
     delete_on_termination = true
-    volume_size = 8
-    volume_type = "gp3"
+    volume_size           = 8
+    volume_type           = "gp3"
     tags = {
       Name = "${var.my_name}_ebs_worker_0${count.index + 1}"
     }
@@ -132,23 +149,23 @@ resource "aws_instance" "instance_workers" {
 }
 
 resource "aws_eip_association" "eip_assoc_master" {
-  instance_id = aws_instance.instance_master.id
+  instance_id   = aws_instance.instance_master.id
   allocation_id = aws_eip.eip_master.id
 }
 
 resource "aws_eip_association" "eip_assoc_workers" {
-  count = var.nm_worker
-  instance_id = element(aws_instance.instance_workers.*.id, count.index)  //It's possible so and so
-  allocation_id = aws_eip.eip_workers[count.index].id                     //It's possible so and so
+  count         = var.nm_worker
+  instance_id   = element(aws_instance.instance_workers.*.id, count.index) //It's possible so and so
+  allocation_id = aws_eip.eip_workers[count.index].id                      //It's possible so and so
 }
 
 resource "aws_eip" "eip_master" {
   //instance = aws_instance.instance_master.id
-  domain   = "vpc"
+  domain = "vpc"
 }
 
 resource "aws_eip" "eip_workers" {
   count = var.nm_worker
   //instance = element(aws_instance.instance_workers[*].id, count.index)
-  domain   = "vpc"
+  domain = "vpc"
 }

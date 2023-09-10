@@ -2,28 +2,33 @@ variable "region" {
   default = "eu-north-1"
 }
 
+variable "vpc_cidr" {
+  default = "10.1.0.0/16"
+}
+
+variable "subnet_cidr" {
+  default = "10.1.1.0/24"
+}
+
 variable "path_for_ansible" {
-  default = "ansible/k8s_deploy_with_crio/"
-}
-
-variable "name_group_master" {
-  default = "ansible_master"
-}
-
-variable "name_group_workers" {
-  default = "ansible_workers"
+  default = "ansible/"
 }
 
 variable "tag" {
   type = map(string)
   default = {
-      kubernetes  = "owned",
-      ManagedBy   = "Terraform"
+    kubernetes = "owned",
+    ManagedBy  = "Terraform"
   }
 }
 
 variable "my_name" {
   default = "k8s"
+}
+
+variable "port" {
+  type    = list(any)
+  default = ["0"]
 }
 
 variable "numbers_instans_workers_deploy" {
@@ -39,5 +44,11 @@ variable "instance_type_worker_deploy" {
 }
 
 variable "user" {
-  default = "ubuntu"
+  default = {
+    al20 = "ec2-user"
+    ubun = "ubuntu"
+    RHEL = "ec2-user"
+    suse = "ec2-user"
+    debi = "admin"
+  }
 }

@@ -1,9 +1,5 @@
-variable "vpc_cidr" {
-  default = "10.1.0.0/16"
-}
+variable "vpc_cidr" {}
 
-variable "subnet_cidr" {
-  default = "10.1.1.0/24"
-}
+variable "subnet_cidr" {}
 
 variable "my_name" {}

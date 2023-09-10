@@ -21,3 +21,7 @@ output "workers" {
 output "path_key_file" {
   value = local_file.local_key_pair.filename
 }
+
+output "user_from_ami" {
+  value = data.aws_ami.ami_latest.name
+}
