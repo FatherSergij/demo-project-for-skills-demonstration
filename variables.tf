@@ -2,6 +2,10 @@ variable "region" {
   default = "eu-north-1"
 }
 
+variable "region_s3" {
+  default = "eu-central-1"
+}
+
 variable "vpc_cidr" {
   default = "10.1.0.0/16"
 }
@@ -32,7 +36,7 @@ variable "port" {
 }
 
 variable "numbers_instans_workers_deploy" {
-  default = 3
+  default = 2
 }
 
 variable "instance_type_master_deploy" {

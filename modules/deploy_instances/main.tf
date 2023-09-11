@@ -1,6 +1,6 @@
 data "aws_ami" "ami_latest" {
   most_recent = true
-  owners = ["amazon"]
+  owners      = ["amazon"]
   filter {
     name   = "virtualization-type"
     values = ["hvm"]

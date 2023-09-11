@@ -26,4 +26,4 @@
       src: $HOME/.kube/config
       dest: "{{ role_path }}/files/config"
       flat: yes
-  when: "'k8s_master' in group_names"         
+  when: "'ansible_master' in group_names"         
