@@ -14,7 +14,10 @@
       src: config
       dest: $HOME/.kube/config
   
-  - name: Init workers
-    script: 
-      cmd: "{{ role_path }}/files/join_for_workers.sh" #role_path - system variable
+  - name: Need before join workers
+    shell: yes | sudo kubeadm reset
+
+  - name: Init workers(role_path - system variable)
+    script:
+      cmd: "{{ role_path }}/files/join_for_workers.sh"
   when: "'ansible_workers' in group_names"

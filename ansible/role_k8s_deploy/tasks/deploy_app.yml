@@ -1,0 +1,8 @@
+---
+- name: Deploy web page(run in master)
+  block:
+  - name: Copy files to master from localhost to deploy web page
+    become: false
+    copy:
+      src: web
+      dest: $HOME
