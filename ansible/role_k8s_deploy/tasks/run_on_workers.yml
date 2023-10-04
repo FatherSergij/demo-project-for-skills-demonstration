@@ -18,6 +18,5 @@
     shell: yes | sudo kubeadm reset
 
   - name: Init workers(role_path - system variable)
-    script:
-      cmd: "{{ role_path }}/files/join_for_workers.sh"
+    script: "{{ role_path }}/files/join_for_workers.sh"
   when: "'ansible_workers' in group_names"
