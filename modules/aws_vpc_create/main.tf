@@ -33,7 +33,6 @@ resource "aws_route_table" "aws_route_table_my" {
     cidr_block = "0.0.0.0/0"
     gateway_id = aws_internet_gateway.aws_igw.id
   }
-
   tags = {
     Name = "route_table_${var.my_name}"
   }
@@ -44,3 +43,13 @@ resource "aws_route_table_association" "associate_subnet_route_table_my" {
   route_table_id = aws_route_table.aws_route_table_my.id
 }
 
+resource "aws_ecr_repository" "ecr_for_my_deploy" {
+  name = "my_image"
+  image_scanning_configuration {
+    scan_on_push = true
+  }
+  force_delete = true
+    tags = {
+    Name = "route_table_${var.my_name}"
+  }
+}

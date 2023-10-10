@@ -15,7 +15,7 @@
       register: result
     
     - name: Create config for kubelet
-      #if run with become: yes then %HOME will be /root
+      #if run with become: true(in ansible.cfg) then %HOME will be /root
       become: false
       shell: |
         mkdir -p $HOME/.kube
@@ -51,20 +51,38 @@
       dest: "{{ role_path }}/files/config"
       flat: yes
 
-#  - name: Check podman installed
-#    shell: dpkg -s podman
-#    register: rc_podman
-
   - name: Install podman
     shell: |
-      sudo apt-get update && sudo apt-get -y upgrade
-      sudo apt-get -y install podman
+      apt-get update && sudo apt-get -y upgrade
+      apt-get -y install podman
     ignore_errors: true
 
   - name: Install Helm (sudo apt-get install apt-transport-https - not run because it ran in install.yml)
     shell: |
       curl https://baltocdn.com/helm/signing.asc | gpg --dearmor | sudo tee /usr/share/keyrings/helm.gpg > /dev/null
       echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/helm.gpg] https://baltocdn.com/helm/stable/debian/ all main" | sudo tee /etc/apt/sources.list.d/helm-stable-debian.list
-      sudo apt-get update
-      sudo apt-get -y install helm   
+      apt-get update
+      apt-get -y install helm  
+
+  - name: downgrade helm1
+    shell: |
+      rm /usr/local/bin/helm
+      curl -fsSL https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 > /tmp/helm.sh
+      chmod +x /tmp/helm.sh
+      /tmp/helm.sh --version v3.12.3
+      helm version    
+
+  - name: downgrade helm2
+    become: false
+    shell: helm upgrade --install nginx-ingress oci://ghcr.io/nginxinc/charts/nginx-ingress --version 1.0.0        
+
+  - name: Install cert-manager
+    become: false
+    shell: kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.13.1/cert-manager.yaml  
+
+  - name: Install Calico
+    shell: |
+      helm repo add projectcalico https://docs.tigera.io/calico/charts
+      kubectl create namespace tigera-operator
+      helm install calico projectcalico/tigera-operator --version v3.26.1 --namespace tigera-operator     
   when: "'ansible_master' in group_names"         

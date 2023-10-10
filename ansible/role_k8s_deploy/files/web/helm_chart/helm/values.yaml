@@ -1,8 +1,4 @@
 namespace: &masterval my-project
-branch_ng: %BRNG%
-branch_nd: %BRND%
-tag_ng: %TAGNG%
-tag_nd: %TAGND%
 namerepo: bigproject
 region: eu-north-1
 
@@ -29,13 +25,13 @@ service:
   targetPort: 80
 
 ingress:
-  annotations:
-    kubernetes.io/ingress.class: nginx 
-    kubernetes.io/tls-acme: "true"
-    cert-manager.io/issuer: "issuer-letsencrypt"
-    acme.cert-manager.io/http01-edit-in-place: "true"
-    nginx.ingress.kubernetes.io/ssl-redirect: "true"
-    nginx.ingress.kubernetes.io/proxy-body-size: 100m
+#  annotations:
+#    kubernetes.io/ingress.class: nginx 
+#    kubernetes.io/tls-acme: "true"
+#    cert-manager.io/issuer: "issuer-letsencrypt"
+#    acme.cert-manager.io/http01-edit-in-place: "true"
+#    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+#    nginx.ingress.kubernetes.io/proxy-body-size: 100m
   tls:
   - hosts:
       - "nginx.fatherfedor.fun"

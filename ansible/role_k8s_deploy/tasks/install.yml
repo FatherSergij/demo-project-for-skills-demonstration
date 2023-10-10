@@ -77,7 +77,7 @@
   - name: Install k8s and pin their version
     shell: |
       apt-get update && apt-get install -y kubelet kubeadm kubectl
-      sudo apt-mark hold kubelet kubeadm kubectl
-      sudo systemctl enable kubelet
-      sudo systemctl start kubelet
+      apt-mark hold kubelet kubeadm kubectl
+      systemctl enable kubelet
+      systemctl start kubelet
   when: rc_k8s.rc != 0

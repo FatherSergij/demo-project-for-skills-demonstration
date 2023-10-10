@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: deploy-nginx
+  #namespace: {{.Values.namespace}}
+spec:
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: 728490037630.dkr.ecr.eu-north-1.amazonaws.com/my_image
+        imagePullPolicy: Always
+        resources:
+          requests:
+            cpu: 200m
+            memory: 300Mi
+          limits:
+            cpu: 300m
+            memory: 400Mi 
+      imagePullSecrets:
+      - name: regcred         

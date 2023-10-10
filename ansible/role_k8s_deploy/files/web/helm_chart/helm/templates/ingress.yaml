@@ -3,11 +3,12 @@ kind: Ingress
 metadata:
   name: ssl-dev
   #namespace: {{.Values.namespace}}
-  {{- with .Values.ingress.annotations }}  
+  #{{- with .Values.ingress.annotations }}  
   annotations:
     {{- toYaml . | nindent 4 }}
   {{- end }}
 spec:
+  ingressClassName: nginx
   {{- if .Values.ingress.tls }}
   tls:
     {{- range .Values.ingress.tls }}

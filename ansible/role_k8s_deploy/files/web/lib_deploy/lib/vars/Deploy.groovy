@@ -21,3 +21,5 @@ def call(String branch_dep, String tag_dep, String service_dep) {
     kubectl delete deploy deploy-${service_dep} -n ${branch_dep}; \
     envsubst < deploy-${service_dep}.yaml | kubectl apply -f -;'")
 }
+
+kubectl create secret docker-registry regcred --docker-username=AWS --docker-server=728490037630.dkr.ecr.eu-north-1.amazonaws.com --docker-password=$(aws ecr get-login-password --region eu-north-1)

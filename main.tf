@@ -46,7 +46,7 @@ resource "null_resource" "instance_deploy" {
   provisioner "remote-exec" {
     inline = ["hostname"]
     connection {
-      host        = element(module.deploy_instances.workers_ip, length(module.deploy_instances.workers_ip) - 1)
+      host        = element(module.deploy_instances.workers_ip, length(module.deploy_instances.workers_ip) - 1) //so that the last worker is created
       type        = "ssh"
       user        = local.user_name
       private_key = file(module.deploy_instances.path_key_file)
@@ -54,6 +54,6 @@ resource "null_resource" "instance_deploy" {
   }
 
   provisioner "local-exec" {
-    command = "cd ansible/ && ansible-playbook main.yml"
+    command = "cd ansible/ && ansible-playbook -e 'region_from_terrafrom=${var.region}' main.yml"
   }
 }
