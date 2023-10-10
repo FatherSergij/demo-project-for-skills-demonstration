@@ -39,4 +39,5 @@
       cd web/helm_chart/helm/templates
       kubectl apply -f deploy-nginx1.yaml
       kubectl apply -f service-nginx1.yaml
+      
   when: "'ansible_master' in group_names"       
