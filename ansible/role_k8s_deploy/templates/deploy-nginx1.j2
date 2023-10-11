@@ -2,7 +2,6 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: deploy-nginx
-  #namespace: {{.Values.namespace}}
 spec:
   selector:
     matchLabels:
@@ -14,7 +13,7 @@ spec:
     spec:
       containers:
       - name: nginx
-        image: 728490037630.dkr.ecr.eu-north-1.amazonaws.com/my_image
+        image: 728490037630.dkr.ecr.{{ region_from_terrafrom }}.amazonaws.com/my_image
         imagePullPolicy: Always
         resources:
           requests:

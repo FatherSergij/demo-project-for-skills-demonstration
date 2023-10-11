@@ -64,7 +64,7 @@
       apt-get update
       apt-get -y install helm  
 
-  - name: downgrade helm1
+  - name: downgrade helm
     shell: |
       rm /usr/local/bin/helm
       curl -fsSL https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 > /tmp/helm.sh
@@ -72,17 +72,24 @@
       /tmp/helm.sh --version v3.12.3
       helm version    
 
-  - name: downgrade helm2
+  - name: Install Nginx-Ingress
     become: false
     shell: helm upgrade --install nginx-ingress oci://ghcr.io/nginxinc/charts/nginx-ingress --version 1.0.0        
 
-  - name: Install cert-manager
+  - name: Install Cert-manager
     become: false
-    shell: kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.13.1/cert-manager.yaml  
+    shell: |
+      helm repo add jetstack https://charts.jetstack.io
+      helm repo update
+      helm upgrade --install cert-manager jetstack/cert-manager \
+        --namespace cert-manager --create-namespace --version v1.13.1 \
+        --set installCRDs=true --set webhook.hostNetwork=true --set webhook.securePort=10260
+    #shell: kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.13.1/cert-manager.yaml  
 
   - name: Install Calico
+    become: false
     shell: |
       helm repo add projectcalico https://docs.tigera.io/calico/charts
-      kubectl create namespace tigera-operator
-      helm install calico projectcalico/tigera-operator --version v3.26.1 --namespace tigera-operator     
+      helm repo update
+      helm upgrade --install calico projectcalico/tigera-operator --version v3.26.1 --namespace tigera-operator --create-namespace    
   when: "'ansible_master' in group_names"         

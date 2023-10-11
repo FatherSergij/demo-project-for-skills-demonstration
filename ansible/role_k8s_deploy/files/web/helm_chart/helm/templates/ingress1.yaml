@@ -11,10 +11,10 @@ spec:
   ingressClassName: nginx
   tls:
     - hosts:
-        - "nginx.fatherfedor.fun"
-      secretName: ssl-letsencrypt 
+        - "nginx.fatherfedor.shop"
+      secretName: issuer-letsencrypt 
   rules:
-    - host: "nginx.fatherfedor.fun"
+    - host: "nginx.fatherfedor.shop"
       http:
         paths:
         - path: /

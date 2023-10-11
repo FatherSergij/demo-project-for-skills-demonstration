@@ -23,7 +23,7 @@
         src: config
         dest: $HOME/.kube/config
 
-    - name: Need before join workers
+    - name: Need run before join workers
       shell: yes | sudo kubeadm reset
 
     - name: Init workers(role_path - system variable)
