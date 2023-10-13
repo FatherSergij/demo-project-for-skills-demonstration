@@ -64,32 +64,53 @@
       apt-get update
       apt-get -y install helm  
 
-  - name: downgrade helm
-    shell: |
-      rm /usr/local/bin/helm
-      curl -fsSL https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 > /tmp/helm.sh
-      chmod +x /tmp/helm.sh
-      /tmp/helm.sh --version v3.12.3
-      helm version    
-
-  - name: Install Nginx-Ingress
-    become: false
-    shell: helm upgrade --install nginx-ingress oci://ghcr.io/nginxinc/charts/nginx-ingress --version 1.0.0        
-
-  - name: Install Cert-manager
-    become: false
-    shell: |
-      helm repo add jetstack https://charts.jetstack.io
-      helm repo update
-      helm upgrade --install cert-manager jetstack/cert-manager \
-        --namespace cert-manager --create-namespace --version v1.13.1 \
-        --set installCRDs=true --set webhook.hostNetwork=true --set webhook.securePort=10260
-    #shell: kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.13.1/cert-manager.yaml  
-
   - name: Install Calico
     become: false
     shell: |
       helm repo add projectcalico https://docs.tigera.io/calico/charts
       helm repo update
-      helm upgrade --install calico projectcalico/tigera-operator --version v3.26.1 --namespace tigera-operator --create-namespace    
+      helm upgrade --install calico projectcalico/tigera-operator --version v3.26.1 --namespace tigera-operator --create-namespace 
+
+  #- name: downgrade helm
+  #  shell: |
+  #    rm /usr/local/bin/helm
+  #    curl -fsSL https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 > /tmp/helm.sh
+  #    chmod +x /tmp/helm.sh
+  #    /tmp/helm.sh --version v3.12.3
+  #    helm version    
+#
+  #- name: Install Nginx-Ingress
+  #  become: false
+  #  shell: helm upgrade --install nginx-ingress oci://ghcr.io/nginxinc/charts/nginx-ingress --version 1.0.0        
+
+  - name: Install Ingress-Nginx Controller_1
+    become: false
+    shell: |
+      wget https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.8.2/deploy/static/provider/cloud/deploy.yaml
+      kubectl apply -f deploy.yaml
+#
+  #- name: Install Ingress-Nginx Controller_2
+  #  blockinfile:
+  #    path: deploy.yaml
+  #    block: --validating-webhook=0.0.0.0:8443
+
+#  - name: Install Ingress-Nginx Controller
+#    become: false
+#    shell: |
+#      kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.8.2/deploy/static/provider/cloud/deploy.yaml           
+#      helm upgrade --install ingress-nginx ingress-nginx \
+#       --repo https://kubernetes.github.io/ingress-nginx \
+#       --namespace ingress-nginx --create-namespace \
+#       --set controller.service.externalTrafficPolicy=Local --set controller.config.use-proxy-protocol=true
+
+  #- name: Install Cert-manager
+  #  become: false
+  #  shell: |
+  #    helm repo add jetstack https://charts.jetstack.io
+  #    helm repo update
+  #    helm upgrade --install cert-manager jetstack/cert-manager \
+  #      --namespace cert-manager --create-namespace --version v1.13.1 \
+  #      --set installCRDs=true --set webhook.hostNetwork=true --set webhook.securePort=10260
+  #  ignore_errors: true    
+    #shell: kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.13.1/cert-manager.yaml  
   when: "'ansible_master' in group_names"         

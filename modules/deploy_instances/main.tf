@@ -79,6 +79,7 @@ resource "aws_security_group" "sg" {
     to_port     = 0
     protocol    = "-1"
     cidr_blocks = ["0.0.0.0/0"]
+    ipv6_cidr_blocks  = ["::/0"]
   }
 
   egress {
@@ -86,6 +87,7 @@ resource "aws_security_group" "sg" {
     to_port     = 0
     protocol    = "-1"
     cidr_blocks = ["0.0.0.0/0"]
+    ipv6_cidr_blocks  = ["::/0"]
   }
 
   tags = {
@@ -150,7 +152,7 @@ resource "aws_instance" "instance_workers" {
 
 resource "aws_eip_association" "eip_assoc_master" {
   instance_id   = aws_instance.instance_master.id
-  allocation_id = aws_eip.eip_master.id
+  allocation_id = "eipalloc-0b1c42a7922f0fb0f"//aws_eip.eip_master.id
 }
 
 resource "aws_eip_association" "eip_assoc_workers" {
@@ -159,10 +161,10 @@ resource "aws_eip_association" "eip_assoc_workers" {
   allocation_id = aws_eip.eip_workers[count.index].id                      //It's possible so and so
 }
 
-resource "aws_eip" "eip_master" {
-  //instance = aws_instance.instance_master.id
-  domain = "vpc"
-}
+//resource "aws_eip" "eip_master" {
+//  //instance = aws_instance.instance_master.id
+//  domain = "vpc"
+//}
 
 resource "aws_eip" "eip_workers" {
   count = var.nm_worker

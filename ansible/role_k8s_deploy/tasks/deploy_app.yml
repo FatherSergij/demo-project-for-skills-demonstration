@@ -38,13 +38,16 @@
   - name: Create secret for pull image
     shell: |
       kubectl create secret docker-registry regcred --docker-username=AWS \
-      --docker-server=728490037630.dkr.ecr.eu-north-1.amazonaws.com --docker-password=$(aws ecr get-login-password --region eu-north-1)
+      --docker-server=728490037630.dkr.ecr.{{ region_from_terrafrom }}.amazonaws.com \
+      --docker-password=$(aws ecr get-login-password --region {{ region_from_terrafrom }})
 
   - name: Run deploy and service
     shell: |
       cd web/helm_chart/helm/templates
+      kubectl apply -f ingress1.yaml      
       kubectl apply -f deploy-nginx1.yaml
       kubectl apply -f service-nginx1.yaml
+#      kubectl apply -f issuer1.yaml
   become: false
   #if run with become: true(in ansible.cfg) then %HOME will be /root and all run will be as root  
   when: "'ansible_master' in group_names"       
