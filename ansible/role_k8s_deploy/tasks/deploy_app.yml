@@ -1,6 +1,19 @@
 ---
 - name: Deploy web page(run in master)
   block:
+  - name: Install Ingress-Nginx Controller_1
+    become: false
+    shell: |
+      wget https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.8.2/deploy/static/provider/cloud/deploy.yaml
+      kubectl apply -f deploy.yaml
+
+  #- name: Install Ingress-Nginx Controller
+  #  shell: |
+  #    helm upgrade --install ingress-nginx ingress-nginx \
+  #     --repo https://kubernetes.github.io/ingress-nginx \
+  #     --namespace ingress-nginx --create-namespace
+#       --set controller.service.externalTrafficPolicy=Local --set controller.config.use-proxy-protocol=true
+
   - name: Copy files to master from localhost to deploy web page
     copy:
       src: web
@@ -26,11 +39,11 @@
     shell: aws ecr get-login-password --region {{ region_from_terrafrom }} | podman login --username AWS \
             --password-stdin 728490037630.dkr.ecr.{{ region_from_terrafrom }}.amazonaws.com
     
-  - name: Build image
-    shell: podman build web/nginx_phpfpm/src/ -t 728490037630.dkr.ecr.{{ region_from_terrafrom }}.amazonaws.com/my_image
-
-  - name: Push image
-    shell: podman push 728490037630.dkr.ecr.{{ region_from_terrafrom }}.amazonaws.com/my_image 
+#  - name: Build image
+#    shell: podman build web/nginx_phpfpm/src/ -t 728490037630.dkr.ecr.{{ region_from_terrafrom }}.amazonaws.com/my_image
+#
+#  - name: Push image
+#    shell: podman push 728490037630.dkr.ecr.{{ region_from_terrafrom }}.amazonaws.com/my_image 
 
   - name: Delete secret key for pull image(if it exist)
     shell: kubectl delete secret regcred --ignore-not-found
@@ -48,6 +61,9 @@
       kubectl apply -f deploy-nginx1.yaml
       kubectl apply -f service-nginx1.yaml
 #      kubectl apply -f issuer1.yaml
+
+  - name: Need restart CoreDNS for correct work
+    shell: kubectl rollout restart deploy coredns -n kube-system
   become: false
   #if run with become: true(in ansible.cfg) then %HOME will be /root and all run will be as root  
   when: "'ansible_master' in group_names"       

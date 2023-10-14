@@ -83,26 +83,6 @@
   #  become: false
   #  shell: helm upgrade --install nginx-ingress oci://ghcr.io/nginxinc/charts/nginx-ingress --version 1.0.0        
 
-  - name: Install Ingress-Nginx Controller_1
-    become: false
-    shell: |
-      wget https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.8.2/deploy/static/provider/cloud/deploy.yaml
-      kubectl apply -f deploy.yaml
-#
-  #- name: Install Ingress-Nginx Controller_2
-  #  blockinfile:
-  #    path: deploy.yaml
-  #    block: --validating-webhook=0.0.0.0:8443
-
-#  - name: Install Ingress-Nginx Controller
-#    become: false
-#    shell: |
-#      kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.8.2/deploy/static/provider/cloud/deploy.yaml           
-#      helm upgrade --install ingress-nginx ingress-nginx \
-#       --repo https://kubernetes.github.io/ingress-nginx \
-#       --namespace ingress-nginx --create-namespace \
-#       --set controller.service.externalTrafficPolicy=Local --set controller.config.use-proxy-protocol=true
-
   #- name: Install Cert-manager
   #  become: false
   #  shell: |
