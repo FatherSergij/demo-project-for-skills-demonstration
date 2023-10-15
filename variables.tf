@@ -36,7 +36,7 @@ variable "port" {
 }
 
 variable "numbers_instans_workers_deploy" {
-  default = 1
+  default = 2
 }
 
 variable "instance_type_master_deploy" {

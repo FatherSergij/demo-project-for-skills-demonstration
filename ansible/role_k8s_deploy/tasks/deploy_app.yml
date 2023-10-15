@@ -4,8 +4,9 @@
   - name: Install Ingress-Nginx Controller_1
     become: false
     shell: |
-      wget https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.8.2/deploy/static/provider/cloud/deploy.yaml
-      kubectl apply -f deploy.yaml
+      wget https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.8.2/deploy/static/provider/aws/deploy.yaml
+      kubectl apply -f deploy.yaml      
+#      wget https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.8.2/deploy/static/provider/cloud/deploy.yaml
 
   #- name: Install Ingress-Nginx Controller
   #  shell: |
@@ -39,11 +40,11 @@
     shell: aws ecr get-login-password --region {{ region_from_terrafrom }} | podman login --username AWS \
             --password-stdin 728490037630.dkr.ecr.{{ region_from_terrafrom }}.amazonaws.com
     
-#  - name: Build image
-#    shell: podman build web/nginx_phpfpm/src/ -t 728490037630.dkr.ecr.{{ region_from_terrafrom }}.amazonaws.com/my_image
-#
-#  - name: Push image
-#    shell: podman push 728490037630.dkr.ecr.{{ region_from_terrafrom }}.amazonaws.com/my_image 
+  - name: Build image
+    shell: podman build web/nginx_phpfpm/src/ -t 728490037630.dkr.ecr.{{ region_from_terrafrom }}.amazonaws.com/my_image
+
+  - name: Push image
+    shell: podman push 728490037630.dkr.ecr.{{ region_from_terrafrom }}.amazonaws.com/my_image 
 
   - name: Delete secret key for pull image(if it exist)
     shell: kubectl delete secret regcred --ignore-not-found
@@ -62,7 +63,7 @@
       kubectl apply -f service-nginx1.yaml
 #      kubectl apply -f issuer1.yaml
 
-  - name: Need restart CoreDNS for correct work
+  - name: Need restart CoreDNS for correct work(from pods not work 'curl name_service(example- curl kubernetes.defaults)')
     shell: kubectl rollout restart deploy coredns -n kube-system
   become: false
   #if run with become: true(in ansible.cfg) then %HOME will be /root and all run will be as root  

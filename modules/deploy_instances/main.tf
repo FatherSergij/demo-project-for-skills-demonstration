@@ -152,7 +152,7 @@ resource "aws_instance" "instance_workers" {
 
 resource "aws_eip_association" "eip_assoc_master" {
   instance_id   = aws_instance.instance_master.id
-  allocation_id = "eipalloc-0b1c42a7922f0fb0f"//aws_eip.eip_master.id
+  allocation_id = "eipalloc-041efad485b4eb529"//aws_eip.eip_master.id
 }
 
 resource "aws_eip_association" "eip_assoc_workers" {
