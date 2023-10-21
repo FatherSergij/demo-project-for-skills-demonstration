@@ -152,7 +152,7 @@ resource "aws_instance" "instance_workers" {
 
 resource "aws_eip_association" "eip_assoc_master" {
   instance_id   = aws_instance.instance_master.id
-  allocation_id = "eipalloc-041efad485b4eb529"//aws_eip.eip_master.id
+  allocation_id = aws_eip.eip_master.id//"eipalloc-041efad485b4eb529"
 }
 
 resource "aws_eip_association" "eip_assoc_workers" {
@@ -161,13 +161,56 @@ resource "aws_eip_association" "eip_assoc_workers" {
   allocation_id = aws_eip.eip_workers[count.index].id                      //It's possible so and so
 }
 
-//resource "aws_eip" "eip_master" {
-//  //instance = aws_instance.instance_master.id
-//  domain = "vpc"
-//}
+resource "aws_eip" "eip_master" {
+  //instance = aws_instance.instance_master.id
+  domain = "vpc"
+}
 
 resource "aws_eip" "eip_workers" {
   count = var.nm_worker
   //instance = element(aws_instance.instance_workers[*].id, count.index)
   domain = "vpc"
 }
+
+resource "aws_lb_target_group" "tg_for_nlb" {
+  name        = "target-group"
+  port        = 80
+  protocol    = "TCP"
+  target_type = "instance"
+  vpc_id      = var.vpc_id
+  health_check {
+    protocol = "TCP"
+  }  
+  tags = {
+    Name = "target_group_${var.my_name}"
+  }  
+}
+
+resource "aws_lb_target_group_attachment" "attach_instance_to_tg" {
+  count         = var.nm_worker
+  target_group_arn = aws_lb_target_group.tg_for_nlb.arn
+  target_id        = aws_instance.instance_workers[count.index].id
+  port             = 80
+} 
+
+resource "aws_lb" "nlb" {
+  name               = "nlb"
+  internal           = false
+  load_balancer_type = "network"
+  security_groups    = [aws_security_group.sg.id]
+  subnets            = [var.subnet_id]
+  tags = {
+    Name = "nlb_${var.my_name}"
+  }
+}
+
+resource "aws_lb_listener" "nlb_tg" {
+  load_balancer_arn = aws_lb.nlb.arn
+  port              = "80"
+  protocol          = "TCP"
+
+  default_action {
+    type             = "forward"
+    target_group_arn = aws_lb_target_group.tg_for_nlb.arn
+  }
+} 

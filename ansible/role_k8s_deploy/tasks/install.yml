@@ -53,7 +53,6 @@
     ignore_errors: true
   when: rc_crio.rc != 0
 
-
 - name: Check k8s installed
   shell: dpkg -s kubelet
   register: rc_k8s

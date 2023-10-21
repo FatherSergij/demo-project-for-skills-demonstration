@@ -46,6 +46,16 @@ resource "null_resource" "instance_deploy" {
   provisioner "remote-exec" {
     inline = ["hostname"]
     connection {
+      host        = module.deploy_instances.master_ip //so that the master is created
+      type        = "ssh"
+      user        = local.user_name
+      private_key = file(module.deploy_instances.path_key_file)
+    }
+  }
+
+  provisioner "remote-exec" {
+    inline = ["hostname"]
+    connection {
       host        = element(module.deploy_instances.workers_ip, length(module.deploy_instances.workers_ip) - 1) //so that the last worker is created
       type        = "ssh"
       user        = local.user_name
