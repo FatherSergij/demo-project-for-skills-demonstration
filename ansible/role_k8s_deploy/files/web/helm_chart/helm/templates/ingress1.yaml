@@ -10,9 +10,9 @@ metadata:
   #  nginx.ingress.kubernetes.io/tls-acme: "true"
   #  cert-manager.io/issuer: "issuer-letsencrypt"
   #  acme.cert-manager.io/http01-edit-in-place: "true"
-    #nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
   #  nginx.ingress.kubernetes.io/rewrite-target: /
-  #  ingress.kubernetes.io/ssl-redirect: "true"
+  #  ingress.kubernetes.io/ssl-redirect: "false"
   #  nginx.ingress.kubernetes.io/proxy-body-size: 100m
 spec:
   ingressClassName: nginx

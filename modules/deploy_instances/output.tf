@@ -17,3 +17,7 @@ output "path_key_file" {
 output "user_from_ami" {
   value = data.aws_ami.ami_latest.name
 }
+
+output "nlb_dns_name" {
+  value = aws_lb.nlb.dns_name
+}

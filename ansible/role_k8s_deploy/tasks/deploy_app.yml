@@ -11,7 +11,7 @@
       src: deploy-nginx1.j2
       dest: $HOME/web/helm_chart/helm/templates/deploy-nginx1.yaml
 
-  - name: Copy aws credentials to master
+  - name: Copy AWS credentials to master
     copy:
       src: .aws/
       dest: ~/.aws/
@@ -49,8 +49,7 @@
   - name: Need restart CoreDNS for correct work(from pods not work 'curl name_service(example- curl kubernetes.defaults)')
     shell: kubectl rollout restart deploy coredns -n kube-system
 
-  - name: Install Ingress-Nginx Controller_1
-    become: false
+  - name: Install Ingress-Nginx Controller
     shell: |
       kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.8.2/deploy/static/provider/aws/deploy.yaml
       kubectl patch deploy ingress-nginx-controller -n ingress-nginx -p '{"spec": {"template": {"spec":{"hostNetwork": true}}}}'
@@ -59,19 +58,24 @@
   - name: Run deploy and service
     shell: |
       cd web/helm_chart/helm/templates
-      kubectl apply -f ingress1.yaml      
       kubectl apply -f deploy-nginx1.yaml
       kubectl apply -f service-nginx1.yaml
-    #  kubectl apply -f issuer1.yaml
+      while ! kubectl apply -f ingress1.yaml; do sleep 5; done 
+    #will run until success
 
-  - name: Run ingress
-    shell: while ! `kubectl apply -f ingress1.yaml`; do sleep 5; done #will run until success
+  - name: Copy key and secret of GoDaddy to master
+    copy:
+      src: .godaddy/
+      dest: ~/.godaddy/
 
-  - name: Create AWS Target group
-    shell:
+  - name: GoDaddy
+    shell: |
+      curl -X PUT "https://api.godaddy.com/v1/domains/fatherfedor.shop/records/CNAME/*" \
+      -H "$(cat .godaddy/godaddy.txt)" \
+      -H "Content-Type: application/json" \
+      -H "$headers" \
+      -d "[ { \"data\": \"{{ nlb_dns_name_from_terrafrom }}\", \"ttl\": 600 } ]"
 
-  - name: Cretae AWS NLB
-    shell:
   become: false
   #if run with become: true(in ansible.cfg) then %HOME will be /root and all run will be as root  
   when: "'ansible_master' in group_names"       

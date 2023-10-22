@@ -80,7 +80,7 @@
     shell: |
       helm repo add projectcalico https://docs.tigera.io/calico/charts
       helm repo update
-      helm upgrade --install calico projectcalico/tigera-operator --version v3.26.1 --namespace tigera-operator --create-namespace 
+      helm upgrade --install calico projectcalico/tigera-operator --version v3.26.3 --namespace tigera-operator --create-namespace 
 
   #- name: downgrade helm
   #  shell: |

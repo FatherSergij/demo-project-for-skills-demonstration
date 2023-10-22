@@ -64,6 +64,6 @@ resource "null_resource" "instance_deploy" {
   }
 
   provisioner "local-exec" {
-    command = "cd ansible/ && ansible-playbook -e 'region_from_terrafrom=${var.region}' main.yml"
+    command = "cd ansible/ && ansible-playbook -e 'region_from_terrafrom=${var.region}' -e nlb_dns_name_from_terrafrom=${module.deploy_instances.nlb_dns_name} main.yml"
   }
 }
