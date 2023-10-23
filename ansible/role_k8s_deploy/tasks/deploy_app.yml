@@ -21,8 +21,8 @@
     shell: apt install -y awscli
 
   - name: To log in to an Amazon ECR registry
-    shell: aws ecr get-login-password --region {{ region_from_terrafrom }} | podman login --username AWS \
-            --password-stdin 728490037630.dkr.ecr.{{ region_from_terrafrom }}.amazonaws.com
+    shell: aws ecr get-login-password --region {{ region_from_terraform }} | podman login --username AWS \
+            --password-stdin 728490037630.dkr.ecr.{{ region_from_terraform }}.amazonaws.com
     
   #- name: Install Ingress-Nginx Controller
   #  shell: |
@@ -32,10 +32,10 @@
 #       --set controller.service.externalTrafficPolicy=Local --set controller.config.use-proxy-protocol=true 
 
   - name: Build image
-    shell: podman build web/nginx_phpfpm/src/ -t 728490037630.dkr.ecr.{{ region_from_terrafrom }}.amazonaws.com/my_image
+    shell: podman build web/nginx_phpfpm/src/ -t 728490037630.dkr.ecr.{{ region_from_terraform }}.amazonaws.com/my_image
 
   - name: Push image
-    shell: podman push 728490037630.dkr.ecr.{{ region_from_terrafrom }}.amazonaws.com/my_image 
+    shell: podman push 728490037630.dkr.ecr.{{ region_from_terraform }}.amazonaws.com/my_image 
 
   - name: Delete secret key for pull image(if it exist)
     shell: kubectl delete secret regcred --ignore-not-found
@@ -43,8 +43,8 @@
   - name: Create secret for pull image
     shell: |
       kubectl create secret docker-registry regcred --docker-username=AWS \
-      --docker-server=728490037630.dkr.ecr.{{ region_from_terrafrom }}.amazonaws.com \
-      --docker-password=$(aws ecr get-login-password --region {{ region_from_terrafrom }})
+        --docker-server=728490037630.dkr.ecr.{{ region_from_terraform }}.amazonaws.com \
+        --docker-password=$(aws ecr get-login-password --region {{ region_from_terraform }})
 
   - name: Need restart CoreDNS for correct work(from pods not work 'curl name_service(example- curl kubernetes.defaults)')
     shell: kubectl rollout restart deploy coredns -n kube-system
@@ -58,6 +58,7 @@
   - name: Run deploy and service
     shell: |
       cd web/helm_chart/helm/templates
+      kubectl apply -f issuer1.yaml
       kubectl apply -f deploy-nginx1.yaml
       kubectl apply -f service-nginx1.yaml
       while ! kubectl apply -f ingress1.yaml; do sleep 5; done 
@@ -68,14 +69,22 @@
       src: .godaddy/
       dest: ~/.godaddy/
 
-  - name: GoDaddy
+  - name: Updating DNS Recosrds in GoDaddy
     shell: |
-      curl -X PUT "https://api.godaddy.com/v1/domains/fatherfedor.shop/records/CNAME/*" \
-      -H "$(cat .godaddy/godaddy.txt)" \
-      -H "Content-Type: application/json" \
-      -H "$headers" \
-      -d "[ { \"data\": \"{{ nlb_dns_name_from_terrafrom }}\", \"ttl\": 600 } ]"
+      curl -X PUT "https://api.godaddy.com/v1/domains/{{ domain_from_terraform }}/records/CNAME/*" \
+        -H "$(cat .godaddy/godaddy.txt)" \
+        -H "Content-Type: application/json" \
+        -H "$headers" \
+        -d "[ { \"data\": \"{{ nlb_dns_name_from_terraform }}\", \"ttl\": 600 } ]"
 
+  - name: Check update DNS Records
+    shell: while ! nslookup nginx.{{ domain_from_terraform }}; do sleep 5; done
+    register: rc_check
+
+  - name: Otput message that all ok))
+    debug:
+      msg: "That's OK. Let's go nginx.{{ domain_from_terraform }}"
+    when: rc_check.rc == 0
   become: false
   #if run with become: true(in ansible.cfg) then %HOME will be /root and all run will be as root  
   when: "'ansible_master' in group_names"       

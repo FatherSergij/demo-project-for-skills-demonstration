@@ -19,7 +19,7 @@ spec:
   tls:
     - hosts:
         - "nginx.fatherfedor.shop"
-      #secretName: issuer-letsencrypt 
+      secretName: issuer-letsencrypt 
   rules:
     - host: "nginx.fatherfedor.shop"
       http:

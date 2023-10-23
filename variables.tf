@@ -56,3 +56,7 @@ variable "user" {
     debi = "admin"
   }
 }
+
+variable "domain" {
+  default = "fatherfedor.shop"
+}

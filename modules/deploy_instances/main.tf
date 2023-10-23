@@ -180,6 +180,10 @@ resource "aws_lb_target_group" "tg_for_nlb" {
   vpc_id      = var.vpc_id
   health_check {
     protocol = "TCP"
+    //healthy_threshold = 2
+    //interval = 5
+    //timeout = 2
+    //unhealthy_threshold = 2
   }  
   tags = {
     Name = "target_group_${var.my_name}"
