@@ -1,6 +1,21 @@
 ---
 - name: Run in master
   block:
+  - name: Copy key and secret of GoDaddy to master
+    become: false 
+    copy:
+      src: .godaddy/
+      dest: ~/.godaddy/
+
+  - name: Updating DNS Recosrds in GoDaddy
+    become: false 
+    shell: |
+      curl -X PUT "https://api.godaddy.com/v1/domains/{{ domain_from_terraform }}/records/CNAME/*" \
+        -H "$(cat .godaddy/godaddy.txt)" \
+        -H "Content-Type: application/json" \
+        -H "$headers" \
+        -d "[ { \"data\": \"{{ nlb_dns_name_from_terraform }}\", \"ttl\": 600 } ]"
+
   - name: Check init cluster k8s
     #if run with become: yes then command is going as root and will be error
     become: false   
@@ -93,15 +108,4 @@
   #- name: Install Nginx-Ingress
   #  become: false
   #  shell: helm upgrade --install nginx-ingress oci://ghcr.io/nginxinc/charts/nginx-ingress --version 1.0.0        
-
-  - name: Install Cert-manager
-    become: false
-    shell: |
-      helm repo add jetstack https://charts.jetstack.io
-      helm repo update
-      helm upgrade --install cert-manager jetstack/cert-manager \
-        --namespace cert-manager --create-namespace --version v1.13.1 \
-        --set installCRDs=true --set webhook.hostNetwork=true --set webhook.securePort=10260
-    ignore_errors: true    
-    #shell: kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.13.1/cert-manager.yaml  
   when: "'ansible_master' in group_names"         

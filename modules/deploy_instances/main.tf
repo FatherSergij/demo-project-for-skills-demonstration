@@ -208,7 +208,7 @@ resource "aws_lb" "nlb" {
   }
 }
 
-resource "aws_lb_listener" "nlb_tg" {
+resource "aws_lb_listener" "nlb_tg_80" {
   load_balancer_arn = aws_lb.nlb.arn
   port              = "80"
   protocol          = "TCP"
@@ -218,3 +218,14 @@ resource "aws_lb_listener" "nlb_tg" {
     target_group_arn = aws_lb_target_group.tg_for_nlb.arn
   }
 } 
+
+resource "aws_lb_listener" "nlb_tg_443" {
+  load_balancer_arn = aws_lb.nlb.arn
+  port              = "443"
+  protocol          = "TCP"
+
+  default_action {
+    type             = "forward"
+    target_group_arn = aws_lb_target_group.tg_for_nlb.arn
+  }
+}

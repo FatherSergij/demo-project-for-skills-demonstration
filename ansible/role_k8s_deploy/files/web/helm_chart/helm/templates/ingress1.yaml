@@ -8,9 +8,9 @@ metadata:
   #  nginx.ingress.kubernetes.io/ingress.class: nginx
   #  kubernetes.io/tls-acme: "true"
   #  nginx.ingress.kubernetes.io/tls-acme: "true"
-  #  cert-manager.io/issuer: "issuer-letsencrypt"
+    cert-manager.io/issuer: "issuer-letsencrypt"
   #  acme.cert-manager.io/http01-edit-in-place: "true"
-    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+  #  nginx.ingress.kubernetes.io/ssl-redirect: "true"
   #  nginx.ingress.kubernetes.io/rewrite-target: /
   #  ingress.kubernetes.io/ssl-redirect: "false"
   #  nginx.ingress.kubernetes.io/proxy-body-size: 100m
@@ -19,7 +19,7 @@ spec:
   tls:
     - hosts:
         - "nginx.fatherfedor.shop"
-      secretName: issuer-letsencrypt 
+      secretName: ssl-letsencrypt 
   rules:
     - host: "nginx.fatherfedor.shop"
       http:
