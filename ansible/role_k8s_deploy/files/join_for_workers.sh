@@ -1,2 +1,2 @@
-kubeadm join 10.1.1.90:6443 --token t33el8.ql6hh6guw8owhs82 \
-	--discovery-token-ca-cert-hash sha256:fdac8d0f5e2be289382dbdb67da94167862c2e9a8b373bea362520454448a722 
+kubeadm join 10.1.1.89:6443 --token 5pcly5.ltifzqoda6zqkn1l \
+	--discovery-token-ca-cert-hash sha256:4de5838f43c11f4091cb3c57c104ebf13eb08ccc2ecea0125cacbebf6e928076 
