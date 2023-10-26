@@ -9,7 +9,7 @@
   - name: Generate values.yaml
     template: 
       src: values.j2
-      dest: $HOME/web/helm_chart/helm/templates/values.yaml
+      dest: $HOME/web/helm_chart/values.yaml
 
   - name: Copy AWS credentials to master
     copy:
@@ -69,12 +69,12 @@
 
   - name: Run deploy and service
     shell: |
-      cd web/helm_chart/helm/
+      cd web/helm_chart/
       helm upgrade --install -n my-project --create-namespace test
 
   #- name: Run deploy and service
   #  shell: |
-  #    cd web/helm_chart/helm/templates
+  #    cd web/helm_chart/templates
   #    kubectl apply -f issuer1.yaml
   #    kubectl apply -f deploy-nginx1.yaml
   #    kubectl apply -f service-nginx1.yaml
