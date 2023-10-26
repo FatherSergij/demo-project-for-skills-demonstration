@@ -2,22 +2,24 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: ssl-dev
-  #namespace: {{.Values.namespace}}
-  #{{- with .Values.ingress.annotations }}  
   annotations:
-    {{- toYaml . | nindent 4 }}
-  {{- end }}
+    nginx.ingress.kubernetes.io/ingress.class: nginx
+    cert-manager.io/issuer: "issuer-letsencrypt"
+    nginx.ingress.kubernetes.io/rewrite-target: /
 spec:
   ingressClassName: nginx
-  {{- if .Values.ingress.tls }}
   tls:
-    {{- range .Values.ingress.tls }}
     - hosts:
-        {{- range .hosts }}
-        - {{ . | quote }}
-        {{- end }}
-      secretName: {{ .secretName }}
-    {{- end }}  
-  {{- end }}
+        - {{.Values.ingress.host}}
+      secretName: ssl-letsencrypt 
   rules:
-  {{- tpl .Values.ingress.hosts . | nindent 4 }}        
+    - host: {{.Values.ingress.host}}
+      http:
+        paths:
+        - path: /
+          pathType: Prefix
+          backend:
+            service:
+              name: sv-nginx
+              port:
+                number: 80

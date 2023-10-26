@@ -1,22 +1,24 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: deploy-{{.Values.service.name1}}
-  #namespace: {{.Values.namespace}}
+  name: deploy-{{.Values.service.name}}
 spec:
   selector:
     matchLabels:
-      app: {{.Values.labels.service1}}
+      app: nginx
   template:
     metadata:
+    annotations:
+      rollme: {{ randAlphaNum 5 | quote }}
       labels:
-        app: {{.Values.labels.service1}}
+        app: nginx
     spec:
       containers:
-      - name: {{.Values.service.name1}}
-        image: my_project
+      - name: nginx
+        image: "{{ .Values.image.repository }}/my_image"
         imagePullPolicy: {{ .Values.image.pullPolicy }}
         resources:
           {{ toYaml .Values.resources | nindent 10 }}
-      #imagePullSecrets:
-      #- name: regcred         
+      #for pull image from aws ecr
+      imagePullSecrets:
+      - name: regcred         

@@ -60,3 +60,7 @@ variable "user" {
 variable "domain" {
   default = "fatherfedor.shop"
 }
+
+variable "aws_user_id" {
+  default = 728490037630
+}

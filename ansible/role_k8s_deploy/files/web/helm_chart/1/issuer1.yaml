@@ -2,7 +2,6 @@ apiVersion: cert-manager.io/v1
 kind: Issuer
 metadata:
   name: issuer-letsencrypt
-  #namespace: {{.Values.namespace}}
 spec:
   acme:
     email: FatherFedor13@gmail.com

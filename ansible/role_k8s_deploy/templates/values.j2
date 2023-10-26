@@ -1,0 +1,17 @@
+ingress:
+  host: "nginx.fatherfedor.shop"
+
+service: 
+  name: sv-nginx
+
+image:
+  repository: {{ aws_user_id_from_terraform }}.dkr.ecr.{{ region_from_terraform }}.amazonaws.com
+  pullPolicy: Always
+
+resources:
+  requests:
+    cpu: 200m
+    memory: 300Mi
+  limits:
+    cpu: 300m
+    memory: 400Mi     
