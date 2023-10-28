@@ -203,14 +203,14 @@ resource "aws_lb_target_group" "tg_for_nlb_443" {
 resource "aws_lb_target_group_attachment" "attach_instance_to_tg_80" {
   count         = var.nm_worker
   target_group_arn = aws_lb_target_group.tg_for_nlb_80.arn
-  target_id        = aws_instance.instance_workers[count.index].id
+  target_id        = aws_instance.instance_workers[count.index].id //with pod ingress controller
   port             = 80
 } 
 
 resource "aws_lb_target_group_attachment" "attach_instance_to_tg_443" {
   count         = var.nm_worker
   target_group_arn = aws_lb_target_group.tg_for_nlb_443.arn
-  target_id        = aws_instance.instance_workers[count.index].id
+  target_id        = aws_instance.instance_workers[count.index].id //with pod ingress controller
   port             = 443
 } 
 

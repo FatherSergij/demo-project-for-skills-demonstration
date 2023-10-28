@@ -38,13 +38,14 @@
     shell: podman push {{ aws_user_id_from_terraform }}.dkr.ecr.{{ region_from_terraform }}.amazonaws.com/my_image 
 
   - name: Delete secret key for pull image(if it exist)
-    shell: kubectl delete secret regcred --ignore-not-found
+    shell: kubectl delete secret regcred --ignore-not-found -n my-project
 
   - name: Create secret for pull image
     shell: |
+      kubectl create namespace my-project
       kubectl create secret docker-registry regcred --docker-username=AWS \
         --docker-server={{ aws_user_id_from_terraform }}.dkr.ecr.{{ region_from_terraform }}.amazonaws.com \
-        --docker-password=$(aws ecr get-login-password --region {{ region_from_terraform }})
+        --docker-password=$(aws ecr get-login-password --region {{ region_from_terraform }}) -n my-project
 
   - name: Need restart CoreDNS for correct work(from pods not work 'curl name_service(example- curl kubernetes.defaults)')
     shell: kubectl rollout restart deploy coredns -n kube-system
@@ -65,12 +66,14 @@
     shell: |
       kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.8.2/deploy/static/provider/aws/deploy.yaml
       kubectl patch deploy ingress-nginx-controller -n ingress-nginx -p '{"spec": {"template": {"spec":{"hostNetwork": true}}}}'
-    #  wget https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.8.2/deploy/static/provider/cloud/deploy.yaml
-
+    #hostNetwork - to node, which pod ran with ingress controller to listen 80 and 443 ports; without that pod listen these ports inside cluster and
+    #NLB cannot get to this pod
+    
   - name: Run deploy and service
     shell: |
       cd web/helm_chart/
-      helm upgrade --install -n my-project --create-namespace test
+      while ! helm upgrade --install -n my-project --create-namespace test .; do sleep 5; done
+    #will run until success(while Ingress-Nginx Controller will run)
 
   #- name: Run deploy and service
   #  shell: |
