@@ -19,8 +19,7 @@ export AWS_SECRET_ACCESS_KEY=
     - Deploing our web(simple - 1 html).
 
 
-Using Ingress-Nginx Controller with Network Load Balancer(AWS) and GoDaddy.com
-
+Using Ingress-Nginx Controller with Network Load Balancer(AWS) and GoDaddy.com<br />
 There is a certificate(Let's Encrypt). 
 
 - variables.tf - all necessary parameters
