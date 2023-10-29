@@ -7,7 +7,7 @@
       src: .godaddy/
       dest: ~/.godaddy/
 
-  - name: Updating DNS Recosrds in GoDaddy
+  - name: Updating DNS Records in GoDaddy
     become: false 
     shell: |
       curl -X PUT "https://api.godaddy.com/v1/domains/{{ domain_from_terraform }}/records/CNAME/*" \

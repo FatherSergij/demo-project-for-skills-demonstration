@@ -1,0 +1,14 @@
+- name: Restart CoreDNS after init workers and install Ingress controller(run in master)
+  block:
+  - name: Need restart CoreDNS for correct work(from pods not work 'curl name_service(example- curl kubernetes.defaults)')
+    shell: kubectl rollout restart deploy coredns -n kube-system
+
+  - name: Install Ingress-Nginx Controller
+    shell: |
+      kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.8.2/deploy/static/provider/aws/deploy.yaml
+      kubectl patch deploy ingress-nginx-controller -n ingress-nginx -p '{"spec": {"template": {"spec":{"hostNetwork": true}}}}'
+    #hostNetwork - to node, which pod ran with ingress controller to listen 80 and 443 ports; without that pod listen these ports inside cluster and
+    #NLB cannot get to this pod
+  become: false
+  #if run with become: true(in ansible.cfg) then %HOME will be /root and all run will be as root  
+  when: "'ansible_master' in group_names"    

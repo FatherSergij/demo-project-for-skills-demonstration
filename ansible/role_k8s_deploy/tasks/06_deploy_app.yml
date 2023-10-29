@@ -1,0 +1,60 @@
+---
+- name: Deploy web page(run in master)
+  block:
+  - name: Copy files to master from localhost to deploy web page
+    copy:
+      src: helm_chart
+      dest: $HOME
+
+  - name: Generate values.yaml
+    template: 
+      src: values.j2
+      dest: $HOME/helm_chart/values.yaml
+
+  - name: Install Cert-manager
+    become: false
+    shell: |
+      helm repo add jetstack https://charts.jetstack.io
+      helm repo update
+      helm upgrade --install cert-manager jetstack/cert-manager \
+        --namespace cert-manager --create-namespace --version v1.13.1 \
+        --set installCRDs=true 
+    #  --set webhook.hostNetwork=true --set webhook.securePort=10260
+    ignore_errors: true    
+
+  - name: Delete secret key for pull image(if it exist)
+    shell: kubectl delete secret regcred --ignore-not-found -n my-project
+
+  - name: Create secret for pull image
+    shell: |
+      kubectl create namespace my-project
+      kubectl create secret docker-registry regcred --docker-username=AWS \
+        --docker-server={{ aws_user_id_from_terraform }}.dkr.ecr.{{ region_from_terraform }}.amazonaws.com \
+        --docker-password=$(aws ecr get-login-password --region {{ region_from_terraform }}) -n my-project
+
+  - name: Run deploy and service
+    shell: |
+      cd helm_chart/
+      while ! helm upgrade --install -n my-project --create-namespace test .; do sleep 5; done
+    #will run until success(while Ingress-Nginx Controller will run)
+
+  #- name: Run deploy and service
+  #  shell: |
+  #    cd web/helm_chart/templates
+  #    kubectl apply -f issuer1.yaml
+  #    kubectl apply -f deploy-nginx1.yaml
+  #    kubectl apply -f service-nginx1.yaml
+  #    while ! kubectl apply -f ingress1.yaml; do sleep 5; done 
+    #will run until success(while Ingress-Nginx Controller will run)
+
+  - name: Check update DNS Records
+    shell: while ! nslookup nginx.{{ domain_from_terraform }}; do sleep 5; done
+    register: rc_check
+
+  - name: Otput message that all ok))
+    debug:
+      msg: "That's OK. Let's go nginx.{{ domain_from_terraform }}"
+    when: rc_check.rc == 0
+  become: false
+  #if run with become: true(in ansible.cfg) then %HOME will be /root and all run will be as root  
+  when: "'ansible_master' in group_names"       
