@@ -4,7 +4,7 @@ Need run only one command:
 ```
 terraform apply 
 ```
-(needed keys for AWS from your account) 
+(needed keys for AWS from your account)<br />
 Example:
 ```
 export AWS_ACCESS_KEY_ID=
