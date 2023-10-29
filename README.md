@@ -1,14 +1,14 @@
-## **Deploy cluster k8s and web in AWS using Terraform and Ansible**
+## **Deploy cluster k8s and web page in AWS using Terraform and Ansible**
 
 Need run only one command: 
 ```
 terraform apply 
 ```
-(need keys for AWS from your account)
+(needed keys for AWS from your account)
 - Example:
 ```
-export AWS_ACCESS_KEY_ID=...
-export AWS_SECRET_ACCESS_KEY=...
+export AWS_ACCESS_KEY_ID=
+export AWS_SECRET_ACCESS_KEY=
 ```
 
 1. Terrafrom
@@ -19,8 +19,9 @@ export AWS_SECRET_ACCESS_KEY=...
 
 
 Using Ingress-Nginx Controller with Network Load Balancer(AWS) and GoDaddy.com
+
 There is a certificate(Let's Encrypt). 
 
-variables.tf - all necessary parameters
-ansible/role_k8s_deploy/files/.aws/credentials - keys for AWS, needed for work with ECR AWS
-ansible/role_k8s_deploy/files/.godaddy/godaddy.txt - key for GoDaddy.com, needed for update DNS Record
+- variables.tf - all necessary parameters
+- ansible/role_k8s_deploy/files/.aws/credentials - keys for AWS, needed for work with ECR AWS
+- ansible/role_k8s_deploy/files/.godaddy/godaddy.txt - key for GoDaddy.com, needed for update DNS Record
