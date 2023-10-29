@@ -15,7 +15,7 @@ export AWS_SECRET_ACCESS_KEY=
     - Creating VPC, Subnet, ECR, Instances, NLB etc in AWS. Creating necessary files for Ansible. Then Ansible runs.
 2. Ansible
     - Deploing cluster k8s with CRI-O.
-    - Deploing our web(simple - 1 html).
+- Deploing our web(simple - 1 html).
 
 
 Using Ingress-Nginx Controller with Network Load Balancer(AWS) and GoDaddy.com
