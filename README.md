@@ -7,7 +7,7 @@ You only need to run one command:
 ```
 terraform apply 
 ```
-Needed keys to run Terraform for AWS from your account(example):<br />
+Needed keys for AWS from your account to run(example):<br />
 ```
 export AWS_ACCESS_KEY_ID=
 export AWS_SECRET_ACCESS_KEY=
