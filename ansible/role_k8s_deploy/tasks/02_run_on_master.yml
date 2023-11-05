@@ -6,6 +6,7 @@
     copy:
       src: .godaddy/
       dest: ~/.godaddy/
+    ignore_errors: true
 
   - name: Updating DNS Records in GoDaddy
     become: false 
@@ -15,6 +16,7 @@
         -H "Content-Type: application/json" \
         -H "$headers" \
         -d "[ { \"data\": \"{{ nlb_dns_name_from_terraform }}\", \"ttl\": 600 } ]"
+    ignore_errors: true
 
   - name: Check init cluster k8s
     #if run with become: yes then command is going as root and will be error
