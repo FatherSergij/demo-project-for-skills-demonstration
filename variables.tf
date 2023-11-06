@@ -64,3 +64,7 @@ variable "domain" {
 variable "aws_user_id" {
   default = 728490037630
 }
+
+variable "number_replicas" {
+  default = 2
+}

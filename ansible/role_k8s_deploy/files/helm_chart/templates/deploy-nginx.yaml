@@ -3,6 +3,7 @@ kind: Deployment
 metadata:
   name: deploy-{{.Values.service.name}}
 spec:
+  replicas: {{.Values.deploy.replica}}
   selector:
     matchLabels:
       app: nginx

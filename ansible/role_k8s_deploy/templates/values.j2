@@ -4,6 +4,9 @@ ingress:
 service: 
   name: sv-nginx
 
+deploy:
+  replica: {{ number_replicas_from_terraform }}
+
 image:
   repository: {{ aws_user_id_from_terraform }}.dkr.ecr.{{ region_from_terraform }}.amazonaws.com
   pullPolicy: Always
