@@ -30,12 +30,12 @@ export AWS_SECRET_ACCESS_KEY=
 <details><summary>
 <b>What's happening:</b>
 </summary>
-1. Terrafrom
-   - Creating _VPC_, _Subnet_, _ECR_, _Instances_, _NLB_ etc in AWS. Creating necessary files for Ansible. 
-   - Then Ansible runs.
-2. Ansible
-   - Deploing cluster k8s with CRI-O.
-   - Deploing our web(simple - 1 html) using Helm.
+1. Terrafrom<br />
+   - Creating _VPC_, <em>Subnet</em>, _ECR_, _Instances_, _NLB_ etc in AWS. Creating necessary files for Ansible.<br /> 
+   - Then Ansible runs.<br />
+2. Ansible<br />
+   - Deploing cluster k8s with CRI-O.<br />
+   - Deploing our web(simple - 1 html) using Helm.<br />
 </details>
 
 
