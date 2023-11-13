@@ -1,4 +1,4 @@
-## **Demo project for skills demonstration**
+## <b>Demo project for skills demonstration</b>
 
 ### About project: 
 Deploy cluster k8s and web page in AWS using Terraform and Ansible.<br /> 
@@ -17,7 +17,7 @@ export AWS_ACCESS_KEY_ID=
 export AWS_SECRET_ACCESS_KEY=
 ```
 
-Technology stack:
+**Technology stack:**
 - AWS
 - Kubernetes
   - Ingress controller
@@ -27,9 +27,9 @@ Technology stack:
 - Prometheus (not yet)
 - Grafana (not yet)
 
-<details><summary><b>
-What's happening:
-</b></summary>
+<details><summary>
+<b>What's happening:</b>
+</summary>
 1. Terrafrom
    - Creating _VPC_, _Subnet_, _ECR_, _Instances_, _NLB_ etc in AWS. Creating necessary files for Ansible. 
    - Then Ansible runs.
