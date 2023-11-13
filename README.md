@@ -4,7 +4,7 @@
 Deploy cluster k8s and web page in AWS using Terraform and Ansible.<br /> 
 Using Ingress-Nginx Controller with Network Load Balancer(AWS) and GoDaddy.com<br />
 There's a certificate(Let's Encrypt).<br />
-There's monitoring using Prometheus and Grafana (not yet)<br />
+There's monitoring using Prometheus and Grafana (not yet).<br />
 
 **You only need to run one command:** 
 ```
