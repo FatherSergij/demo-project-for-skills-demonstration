@@ -27,7 +27,7 @@ export AWS_SECRET_ACCESS_KEY=<br />
 <details><summary>
 <b>What's happening:</b>
 </summary>
-1. Terrafrom<br />
+__1. Terrafrom__<br />
 --- Creating <em>VPC</em>, <em>Subnet</em>, <em>ECR</em>, <em>Instances</em>, <em>NLB</em> etc in AWS.<br /> 
 --- Creating necessary files for Ansible.<br /> 
 --- Then Ansible runs.<br />
