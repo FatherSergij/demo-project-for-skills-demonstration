@@ -1,10 +1,10 @@
 ## **Demo project for skills demonstration**
 
-# About project: #
-Deploy cluster k8s and web page in AWS using Terraform and Ansible. 
+### About project: 
+Deploy cluster k8s and web page in AWS using Terraform and Ansible.<br /> 
 Using Ingress-Nginx Controller with Network Load Balancer(AWS) and GoDaddy.com<br />
-There's a certificate(Let's Encrypt).
-There's monitoring using Prometheus and Grafana (not yet)
+There's a certificate(Let's Encrypt).<br />
+There's monitoring using Prometheus and Grafana (not yet)<br />
 
 You only need to run one command: 
 ```
@@ -27,15 +27,16 @@ Technology stack:
     - Prometheus (not yet)
     - Grafana (not yet)
 
-What's happening:
 <details><summary><b>
+What's happening:
+</b></summary>...</details>
 1. Terrafrom
     - Creating _VPC_, _Subnet_, _ECR_, _Instances_, _NLB_ etc in AWS. Creating necessary files for Ansible. 
     - Then Ansible runs.
 2. Ansible
     - Deploing cluster k8s with CRI-O.
     - Deploing our web(simple - 1 html) using Helm.
-</b></summary>...</details>
+
 
 - variables.tf - all necessary parameters
 - ansible/role_k8s_deploy/files/.aws/credentials - keys for your account AWS, needed for work with ECR AWS and secret for Amazon Elastic Block Store (EBS) CSI driver
