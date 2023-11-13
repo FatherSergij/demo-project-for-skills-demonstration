@@ -19,8 +19,6 @@ export AWS_SECRET_ACCESS_KEY=<br />
 **Technology stack:**
 - AWS
 - Kubernetes
-  - Ingress controller
-  - RBAC
 - Terraform
 - Ansible
 - Prometheus (not yet)
@@ -30,11 +28,17 @@ export AWS_SECRET_ACCESS_KEY=<br />
 <b>What's happening:</b>
 </summary>
 1. Terrafrom<br />
---- Creating <em>VPC</em>, <em>Subnet</em>, <em>ECR</em>, <em>Instances</em>, <em>NLB</em> etc in AWS. Creating necessary files for Ansible.<br /> 
+--- Creating <em>VPC</em>, <em>Subnet</em>, <em>ECR</em>, <em>Instances</em>, <em>NLB</em> etc in AWS.<br /> 
+--- Creating necessary files for Ansible.<br /> 
 --- Then Ansible runs.<br />
 2. Ansible<br />
 --- Deploing cluster k8s with CRI-O.<br />
+--- Install Ingress-Nginx Controller.<br />
+--- Build and push image in AWS ECR.<br />
+--- Install Cert-manager.<br />
 --- Deploing our web(simple - 1 html) using Helm.<br />
+--- Updating DNS Records in GoDaddy.<br />
+--- Deploing Prometheus.<br />
 </details>
 
 
