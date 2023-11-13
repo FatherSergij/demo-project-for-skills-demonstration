@@ -18,24 +18,25 @@ export AWS_SECRET_ACCESS_KEY=
 ```
 
 Technology stack:
-    - AWS
-    - Kubernetes
-        - Ingress controller
-        - RBAC
-    - Terraform
-    - Ansible
-    - Prometheus (not yet)
-    - Grafana (not yet)
+- AWS
+- Kubernetes
+  - Ingress controller
+  - RBAC
+- Terraform
+- Ansible
+- Prometheus (not yet)
+- Grafana (not yet)
 
 <details><summary><b>
 What's happening:
-</b></summary>...</details>
+</b></summary>
 1. Terrafrom
-    - Creating _VPC_, _Subnet_, _ECR_, _Instances_, _NLB_ etc in AWS. Creating necessary files for Ansible. 
-    - Then Ansible runs.
+   - Creating _VPC_, _Subnet_, _ECR_, _Instances_, _NLB_ etc in AWS. Creating necessary files for Ansible. 
+   - Then Ansible runs.
 2. Ansible
-    - Deploing cluster k8s with CRI-O.
-    - Deploing our web(simple - 1 html) using Helm.
+   - Deploing cluster k8s with CRI-O.
+   - Deploing our web(simple - 1 html) using Helm.
+</details>
 
 
 - variables.tf - all necessary parameters
