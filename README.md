@@ -12,11 +12,10 @@ terraform apply
 ```
 Needed keys for AWS from your account to run:<br />
 <details><summary>(example)</summary>
-```
-export AWS_ACCESS_KEY_ID=
-export AWS_SECRET_ACCESS_KEY=
-```
+export AWS_ACCESS_KEY_ID=<br />
+export AWS_SECRET_ACCESS_KEY=<br />
 </details>
+
 **Technology stack:**
 - AWS
 - Kubernetes
