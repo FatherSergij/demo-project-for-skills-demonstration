@@ -6,11 +6,11 @@ Using Ingress-Nginx Controller with Network Load Balancer(AWS) and GoDaddy.com<b
 There's a certificate(Let's Encrypt).<br />
 There's monitoring using Prometheus and Grafana (not yet)<br />
 
-You only need to run one command: 
+**You only need to run one command:** 
 ```
 terraform apply 
 ```
-**Needed keys for AWS from your account to run:**<br />
+Needed keys for AWS from your account to run:<br />
 <details><summary>(example)</summary>
 export AWS_ACCESS_KEY_ID=<br />
 export AWS_SECRET_ACCESS_KEY=<br />
@@ -30,7 +30,7 @@ export AWS_SECRET_ACCESS_KEY=<br />
 <b>What's happening:</b>
 </summary>
 1. Terrafrom<br />
---- Creating _VPC_, <em>Subnet</em>, _ECR_, _Instances_, _NLB_ etc in AWS. Creating necessary files for Ansible.<br /> 
+--- Creating <em>VPC</em>, <em>Subnet</em>, <em>ECR</em>, <em>Instances</em>, <em>NLB</em> etc in AWS. Creating necessary files for Ansible.<br /> 
 --- Then Ansible runs.<br />
 2. Ansible<br />
 --- Deploing cluster k8s with CRI-O.<br />
