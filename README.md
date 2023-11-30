@@ -4,7 +4,7 @@
 Deploy cluster k8s and web page in AWS using Terraform and Ansible.<br /> 
 Using Ingress-Nginx Controller with Network Load Balancer(AWS) and GoDaddy.com<br />
 There's a certificate(Let's Encrypt).<br />
-There's monitoring using Prometheus and Grafana (not yet).<br />
+There's monitoring using Prometheus and Grafana.<br />
 
 **Commands to run:** 
 ```
@@ -13,7 +13,7 @@ terraform init
 ```
 terraform apply 
 ```
-Needed [keys]https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html for AWS from your account to run:<br />
+Needed [keys](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html) for AWS from your account to run:<br />
 <details><summary>(example)</summary>
 export AWS_ACCESS_KEY_ID=<br />
 export AWS_SECRET_ACCESS_KEY=<br />
@@ -24,8 +24,8 @@ export AWS_SECRET_ACCESS_KEY=<br />
 - Kubernetes
 - Terraform
 - Ansible
-- Prometheus (not yet)
-- Grafana (not yet)
+- Prometheus
+- Grafana
 
 <details><summary>
 <b>What's happening:</b>
@@ -41,7 +41,7 @@ export AWS_SECRET_ACCESS_KEY=<br />
 --- Install Cert-manager.<br />
 --- Deploing our web(simple - 1 html) using Helm.<br />
 --- Updating DNS Records in GoDaddy.<br />
---- Deploing Prometheus.<br />
+--- Deploing Prometheus, exporters and Grafana<br />
 </details>
 
 
