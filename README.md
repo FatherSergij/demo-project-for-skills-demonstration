@@ -6,11 +6,14 @@ Using Ingress-Nginx Controller with Network Load Balancer(AWS) and GoDaddy.com<b
 There's a certificate(Let's Encrypt).<br />
 There's monitoring using Prometheus and Grafana (not yet).<br />
 
-**You only need to run one command:** 
+**Commands to run:** 
+```
+terraform init
+```
 ```
 terraform apply 
 ```
-Needed keys for AWS from your account to run:<br />
+Needed [keys]https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html for AWS from your account to run:<br />
 <details><summary>(example)</summary>
 export AWS_ACCESS_KEY_ID=<br />
 export AWS_SECRET_ACCESS_KEY=<br />
@@ -43,5 +46,5 @@ export AWS_SECRET_ACCESS_KEY=<br />
 
 
 - variables.tf - all necessary parameters
-- ansible/role_k8s_deploy/files/.aws/credentials - keys for your account AWS, needed for work with ECR AWS and secret for Amazon Elastic Block Store (EBS) CSI driver
-- ansible/role_k8s_deploy/files/.godaddy/godaddy.txt - key for your account GoDaddy.com, needed for update DNS Record
+- ansible/role_k8s_deploy/files/.aws/credentials - [keys](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html) for your account AWS, needed for work with ECR AWS and secret for Amazon Elastic Block Store (EBS) CSI driver
+- ansible/role_k8s_deploy/files/.godaddy/godaddy.txt - [key](https://developer.godaddy.com/keys) for your account GoDaddy.com, needed for update DNS Record
