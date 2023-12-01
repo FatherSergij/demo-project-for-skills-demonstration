@@ -1,11 +1,13 @@
 ---
 - name: Run in master
   block:
-  - name: Copy key and secret of GoDaddy to master
+  - name: Copy some directories - AWS credentials, key and secret of GoDaddy, App passwords of Google Account for alertmanager to master
     become: false 
     copy:
-      src: .godaddy/
-      dest: ~/.godaddy/
+      src: "{{item}}"
+      dest: ~/
+    with_items:
+      ['.aws','.godaddy','.alert']
     ignore_errors: true
 
   - name: Updating DNS Records in GoDaddy
@@ -16,7 +18,7 @@
         -H "Content-Type: application/json" \
         -H "$headers" \
         -d "[ { \"data\": \"{{ nlb_dns_name_from_terraform }}\", \"ttl\": 600 } ]"
-    ignore_errors: true
+    ignore_errors: true    
 
   - name: Check init cluster k8s
     #if run with become: yes then command is going as root and will be error
@@ -28,9 +30,9 @@
   - name: Init k8s if cluster not init
     block:
     - name: Initialization cluster k8s on master and extract 2 last line for join workers
-      shell: kubeadm init --pod-network-cidr=10.244.0.0/16 --cri-socket=unix:///var/run/crio/crio.sock | tail -2
+      shell: kubeadm init --pod-network-cidr=10.244.0.0/16 --cri-socket=unix:///var/run/crio/crio.sock --node-name {{ inventory_hostname }}| tail -2
       register: result
-    
+
     - name: Create config for kubelet
       #if run with become: true(in ansible.cfg) then %HOME will be /root
       become: false
@@ -58,7 +60,7 @@
         content: "{{ result.stdout }}"
         dest: "{{ role_path }}/files/join_for_workers.sh" #role_path - system variable
         mode: '0775'
-      delegate_to: localhost            
+      delegate_to: localhost
     when: rc_k8s.rc == 0
 
   - name: Copy config from master to localhost for workers
@@ -82,7 +84,9 @@
       dest: $HOME/    
 
   - name: Login to DockerHub
-    shell: cat dockerhub.txt | podman login --username fatherfedor --password-stdin      
+    shell: cat dockerhub.txt | podman login --username fatherfedor --password-stdin
+    ignore_errors: true
+    #need .aws/dockerhub.txt(02_init_master.yml)
 #-----------------------------
 
   - name: Install Helm (sudo apt-get install apt-transport-https - not run because it ran in install.yml)
@@ -98,16 +102,4 @@
       helm repo add projectcalico https://docs.tigera.io/calico/charts
       helm repo update
       helm upgrade --install calico projectcalico/tigera-operator --version v3.26.3 --namespace tigera-operator --create-namespace 
-
-  #- name: downgrade helm
-  #  shell: |
-  #    rm /usr/local/bin/helm
-  #    curl -fsSL https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 > /tmp/helm.sh
-  #    chmod +x /tmp/helm.sh
-  #    /tmp/helm.sh --version v3.12.3
-  #    helm version    
-#
-  #- name: Install Nginx-Ingress
-  #  become: false
-  #  shell: helm upgrade --install nginx-ingress oci://ghcr.io/nginxinc/charts/nginx-ingress --version 1.0.0        
   when: "'ansible_master' in group_names"         

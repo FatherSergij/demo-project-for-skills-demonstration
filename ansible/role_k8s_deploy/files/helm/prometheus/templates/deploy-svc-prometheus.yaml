@@ -1,0 +1,72 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: prometheus
+  labels:
+    app: prometheus
+spec:
+  type: NodePort
+  ports:
+  - port: 9090
+    targetPort: 9090
+  selector:
+    app: prometheus
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: prometheus
+  labels:
+    app: prometheus
+spec:
+  replicas: 1
+  selector:
+    matchLabels: 
+      app: prometheus
+  template:
+    metadata:
+      labels:
+        app: prometheus
+    spec:
+      hostNetwork: true ####so that you can to go a browser at the address - ip_worker:9090
+      dnsPolicy: "ClusterFirstWithHostNet" # It should be used for pods running with hostNetwork: true. This way it will use cluster DNS and will be in host network.
+      serviceAccountName: prometheus
+      containers:
+      - name: prometheus-server
+        image: prom/prometheus:v2.48.0
+        ports:
+          - containerPort: 9090
+        args: 
+          - --config.file=/etc/prometheus/prometheus.yml
+          - --storage.tsdb.path=/prometheus
+          - --web.enable-lifecycle #for reload configuration(curl -X POST localhost:9093/-/reload)
+        volumeMounts:
+          - name: prometheus-config-volume
+            mountPath: /etc/prometheus/prometheus.yml
+            subPath: prometheus.yml
+          - name: rules-volume
+            mountPath: /etc/prometheus/rules
+          - name: prometheus-data
+            mountPath: /prometheus
+      #tolerations:
+      #- key: "run"
+      #  operator: "Equal"
+      #  value: "promgraf"
+      #  effect: "NoSchedule"      
+      initContainers: #without this there will be error - prometheus panic: Unable to create mmap-ed active query log and pod didn't create
+        - name: prometheus-data-permission-fix
+          image: busybox
+          command: ["/bin/chmod","-R","777", "/prometheus"]
+          volumeMounts:
+          - name: prometheus-data
+            mountPath: /prometheus      
+      volumes:
+        - name: prometheus-config-volume
+          configMap:
+            name: prometheus-config  
+        - name: rules-volume
+          configMap:
+            name: prometheus-rules   
+        - name: prometheus-data
+          persistentVolumeClaim:
+            claimName: pvc-prometheus-data    

@@ -11,10 +11,11 @@ data "aws_ami" "ami_latest" {
   }
   filter {
     name   = "name"
-    values = ["ubuntu/images/*20.04*"]
+    values = ["ubuntu/images/*22.04*"]
   }
 }
 
+#---Policy-Role-Master
 resource "aws_iam_policy" "policy_master" {
   name   = "policy_master"
   path   = "/"
@@ -37,6 +38,19 @@ resource "aws_iam_role_policy_attachment" "attach_policy_master_role_master" {
   policy_arn = aws_iam_policy.policy_master.arn
 }
 
+#for EBS CSI driver for mounting volume of Prometheus
+#resource "aws_iam_role_policy_attachment" "attach_policy_ebs_role_master" {
+#  role       = aws_iam_role.role_master.name
+#  policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonEBSCSIDriverPolicy"
+#}
+
+resource "aws_iam_instance_profile" "master_profile" {
+  name = "master_profile"
+  role = aws_iam_role.role_master.name
+}
+#------------------------------
+
+#---Policy-Role-Worker
 resource "aws_iam_policy" "policy_worker" {
   name   = "policy_worker"
   path   = "/"
@@ -54,10 +68,22 @@ resource "aws_iam_role" "role_worker" {
   }
 }
 
-resource "aws_iam_role_policy_attachment" "attach_policy_master_role_worker" {
+resource "aws_iam_role_policy_attachment" "attach_policy_worker_role_worker" {
   role       = aws_iam_role.role_worker.name
   policy_arn = aws_iam_policy.policy_worker.arn
 }
+
+#for EBS CSI driver for mounting volume of Prometheus
+#resource "aws_iam_role_policy_attachment" "attach_policy_ebs_role_worker" {
+#  role       = aws_iam_role.role_worker.name
+#  policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonEBSCSIDriverPolicy"
+#}
+
+resource "aws_iam_instance_profile" "worker_profile" {
+  name = "worker_profile"
+  role = aws_iam_role.role_worker.name
+}
+#------------------------------
 
 resource "aws_security_group" "sg" {
   name        = "sg"
@@ -116,6 +142,7 @@ resource "aws_instance" "instance_master" {
   instance_type          = var.instance_type_master
   subnet_id              = var.subnet_id
   vpc_security_group_ids = [aws_security_group.sg.id]
+   iam_instance_profile = aws_iam_instance_profile.master_profile.name
   key_name               = aws_key_pair.generated_key.key_name
   root_block_device {
     delete_on_termination = true
@@ -132,10 +159,11 @@ resource "aws_instance" "instance_master" {
 
 resource "aws_instance" "instance_workers" {
   count                  = var.nm_worker
-  ami                    = "ami-0989fb15ce71ba39e"
+  ami                    = data.aws_ami.ami_latest.id
   instance_type          = var.instance_type_worker
   subnet_id              = var.subnet_id
   vpc_security_group_ids = [aws_security_group.sg.id]
+  iam_instance_profile = aws_iam_instance_profile.worker_profile.name
   key_name               = aws_key_pair.generated_key.key_name
   root_block_device {
     delete_on_termination = true

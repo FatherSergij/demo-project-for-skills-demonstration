@@ -1,0 +1,8 @@
+
+
+Additional volume created for Prometheus. If Terraform's commands "apply or "destroy" finish incorrect this volume need to delete manually.
+Volume ID - vol-045591db62f08bd24
+
+Prometheus's address is 16.16.35.133:9090
+Grafana's address is 16.16.35.133:32000
+That's OK. Let's go nginx.fatherfedor.shop
