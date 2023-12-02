@@ -224,7 +224,7 @@ resource "aws_acm_certificate" "clb_cert" {
   }
 }
 
-resource "aws_elb" "clb" {
+resource "aws_elb" "nlb" {
   name            = "clb"
   internal        = false
   security_groups = [aws_security_group.sg.id]
@@ -250,7 +250,7 @@ resource "aws_elb" "clb" {
 
 resource "aws_elb_attachment" "attach_instance" {
   count         = var.nm_worker
-  elb      = aws_elb.clb.id
+  elb      = aws_elb.nlb.id
   instance = aws_instance.instance_workers[count.index].id
 }
 

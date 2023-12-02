@@ -99,14 +99,14 @@
       cd helm/grafana/
       helm upgrade --install -n monitoring --create-namespace grafana .
 
-  - name: Set DeleteOnTermination in "true" on volume created of Prometheus to be one will delete when we run command terraform destroy
-    #if this command doesn't run you need to delete the volume in AWS manually
-    shell: |
-      while ! aws ec2 modify-instance-attribute --instance-id \
-        $(aws ec2 describe-volumes --filters Name=tag:pv,Values=prometheus --query 'Volumes[0].Attachments[0].InstanceId' --output text --region {{ region_from_terraform }}) \
-        --block-device-mappings "[{\"DeviceName\": \
-        \"$(aws ec2 describe-volumes --filters Name=tag:pv,Values=prometheus --query 'Volumes[0].Attachments[0].Device' --output text --region {{ region_from_terraform }})\",\
-        \"Ebs\":{\"DeleteOnTermination\":true}}]" --region {{ region_from_terraform }}; do sleep 5; done
+  #- name: Set DeleteOnTermination in "true" on volume created of Prometheus to be one will delete when we run command terraform destroy
+  #  #if this command doesn't run you need to delete the volume in AWS manually
+  #  shell: |
+  #    while ! aws ec2 modify-instance-attribute --instance-id \
+  #      $(aws ec2 describe-volumes --filters Name=tag:pv,Values=prometheus --query 'Volumes[0].Attachments[0].InstanceId' --output text --region {{ region_from_terraform }}) \
+  #      --block-device-mappings "[{\"DeviceName\": \
+  #      \"$(aws ec2 describe-volumes --filters Name=tag:pv,Values=prometheus --query 'Volumes[0].Attachments[0].Device' --output text --region {{ region_from_terraform }})\",\
+  #      \"Ebs\":{\"DeleteOnTermination\":true}}]" --region {{ region_from_terraform }}; do sleep 5; done
 
   - name: Approve CSRs(to see 04_cert_kudeadm.yml)
     shell: for csr_name in $(kubectl get csr | grep -i pending | awk '{print $1}'); do kubectl certificate approve $csr_name; done

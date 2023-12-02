@@ -426,7 +426,7 @@ data:
                 "uid": "P1809F7CD0C75ACF3"
               },
               "editorMode": "code",
-              "expr": "((node_memory_MemTotal_bytes{node=\"$Node\"} - node_memory_MemFree_bytes{node=\"$Node\"}) / (node_memory_MemTotal_bytes{node=\"$Node\"} )) * 100",
+              "expr": "((node_memory_MemTotal_bytes{node=\"$Node\"} - node_memory_MemFree_bytes{node=\"$Node\"} - node_memory_MemAvailable_bytes{node=\"$Node\"}) / (node_memory_MemTotal_bytes{node=\"$Node\"} )) * 100",
               "instant": false,
               "legendFormat": "__auto",
               "range": true,
@@ -879,7 +879,7 @@ data:
         "list": [
           {
             "current": {
-              "selected": false,
+              "selected": true,
               "text": "worker01",
               "value": "worker01"
             },
@@ -917,4 +917,4 @@ data:
       "uid": "a86ed0dd-de18-4fd2-bf56-fa640320b385",
       "version": 1,
       "weekStart": ""
-    }
+    }   

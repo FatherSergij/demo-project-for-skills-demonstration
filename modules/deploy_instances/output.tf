@@ -19,5 +19,5 @@ output "user_from_ami" {
 }
 
 output "nlb_dns_name" {
-  value = aws_lb.nlb.dns_name
+  value = aws_elb.nlb.dns_name
 }
