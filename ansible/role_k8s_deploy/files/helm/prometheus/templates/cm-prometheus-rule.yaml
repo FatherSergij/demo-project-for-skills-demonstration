@@ -1,5 +1,5 @@
 apiVersion: v1
-#{{ "{{" }} - because deploying via a helm chart. It will be only 2 brackets after helm 
+#{{ "{{" }} - because deploying via a helm chart. It will be only 2 brackets after helm
 kind: ConfigMap
 metadata:
   name: prometheus-rules
@@ -9,7 +9,7 @@ data:
     - name: demo alert
       rules:  
       - alert: kube-state-metrics-down
-        expr: up{instance="https://nginx.fatherfedor.shop"} == 0
+        expr: up{instance="https://prefix.domain"} == 0
         for: 0m
         labels:
           severity: critical

@@ -6,10 +6,10 @@ provider "aws" {
 }
 
 module "aws_vpc_create" {
-  source      = "./modules/aws_vpc_create"
-  my_name     = var.my_name
-  vpc_cidr    = var.vpc_cidr
-  subnet_cidr = var.subnet_cidr
+  source        = "./modules/aws_vpc_create"
+  my_name       = var.my_name
+  vpc_cidr      = var.vpc_cidr
+  subnet_cidr   = var.subnet_cidr
 }
 
 module "deploy_instances" {
@@ -64,15 +64,15 @@ resource "null_resource" "instance_deploy" {
   }
 
   provisioner "local-exec" {
-        command = "cd ansible/ && ansible-playbook -e 'region_from_terraform'=${var.region} -e 'nlb_dns_name_from_terraform'=${module.deploy_instances.nlb_dns_name} -e 'domain_from_terraform'=${var.domain} -e 'aws_user_id_from_terraform'=${var.aws_user_id} -e 'number_replicas_from_terraform'=${var.number_replicas_web} main.yml"
-  } 
+    command = "cd ansible/ && ansible-playbook -e 'region_from_terraform'=${var.region} -e 'nlb_dns_name_from_terraform'=${module.deploy_instances.nlb_dns_name} -e 'domain_from_terraform'=${var.domain} -e 'prefix_from_terraform'=${var.prefix} -e 'aws_user_id_from_terraform'=${var.aws_user_id} -e 'number_replicas_from_terraform'=${var.number_replicas_web} -e 'volume_id_from_terraform'=${module.aws_vpc_create.volume_id} main.yml"
+  }
 }
 
 resource "null_resource" "output_adresses" {
   depends_on = [null_resource.instance_deploy]
   triggers = {
     timestamp = timestamp() //for ansible-playbook to to run always
-  }  
+  }
   provisioner "local-exec" {
     command = "cat ansible/output.txt"
   }

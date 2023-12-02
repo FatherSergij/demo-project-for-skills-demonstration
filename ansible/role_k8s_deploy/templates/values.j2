@@ -1,5 +1,5 @@
 ingress:
-  host: "nginx.{{ domain_from_terraform }}"
+  host: "{{ prefix_from_terraform }}.{{ domain_from_terraform }}"
 
 service: 
   name: sv-nginx

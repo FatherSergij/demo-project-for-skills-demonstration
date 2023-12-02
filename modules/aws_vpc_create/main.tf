@@ -18,12 +18,13 @@ resource "aws_internet_gateway" "aws_igw" {
 }
 
 resource "aws_subnet" "aws_subnet_my" {
+  count                   = "${length(var.subnet_cidr)}"
   vpc_id                  = aws_vpc.aws_vpc_my.id
-  availability_zone       = data.aws_availability_zones.available.names[0]
-  cidr_block              = var.subnet_cidr
+  availability_zone       = data.aws_availability_zones.available.names[count.index]
+  cidr_block              = var.subnet_cidr[count.index]
   map_public_ip_on_launch = true
   tags = {
-    Name = "subnet_${var.my_name}"
+    Name = "subnet_${count.index+1}${var.my_name}"
   }
 }
 
@@ -39,7 +40,8 @@ resource "aws_route_table" "aws_route_table_my" {
 }
 
 resource "aws_route_table_association" "associate_subnet_route_table_my" {
-  subnet_id      = aws_subnet.aws_subnet_my.id
+  count          = "${length(aws_subnet.aws_subnet_my)}"
+  subnet_id      = aws_subnet.aws_subnet_my[count.index].id
   route_table_id = aws_route_table.aws_route_table_my.id
 }
 
@@ -49,7 +51,15 @@ resource "aws_ecr_repository" "ecr_for_my_deploy" {
     scan_on_push = true
   }
   force_delete = true
-    tags = {
+  tags = {
     Name = "route_table_${var.my_name}"
+  }
+}
+
+resource "aws_ebs_volume" "volume_for_prometheus" {
+  availability_zone = data.aws_availability_zones.available.names[0]
+  size              = 4
+  tags = {
+    Name = "volume_${var.my_name}"
   }
 }

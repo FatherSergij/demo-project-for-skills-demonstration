@@ -37,6 +37,16 @@
       src: values.j2
       dest: $HOME/helm/web/values.yaml
 
+  - name: Generate pvc-pv-prometheus.yaml
+    template: 
+      src: pvc-pv-prometheus.j2
+      dest: $HOME/helm/prometheus/templates/pvc-pv-prometheus.yaml
+
+  - name: Prepare cm-prometheus-rule.yaml
+    shell: |
+      sed -i 's/prefix/{{ prefix_from_terraform }}/' $HOME/helm/prometheus/templates/cm-prometheus-rule.yaml
+      sed -i 's/domain/{{ domain_from_terraform }}/' $HOME/helm/prometheus/templates/cm-prometheus-rule.yaml
+
   - name: Delete secret key for pull image(if it exist)
     shell: kubectl delete secret regcred --ignore-not-found -n my-project
 

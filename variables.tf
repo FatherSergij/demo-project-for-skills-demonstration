@@ -11,7 +11,7 @@ variable "vpc_cidr" {
 }
 
 variable "subnet_cidr" {
-  default = "10.1.1.0/24"
+  default = ["10.1.0.0/24", "10.1.1.0/24"]
 }
 
 variable "path_for_ansible" {
@@ -36,7 +36,7 @@ variable "port" {
 }
 
 variable "numbers_instans_workers_deploy" {
-  default = 3
+  default = 2
 }
 
 variable "instance_type_master_deploy" {
@@ -44,7 +44,7 @@ variable "instance_type_master_deploy" {
 }
 
 variable "instance_type_worker_deploy" {
-  default = "t3.micro"
+  default = "t3.small"
 }
 
 variable "user" {
@@ -59,6 +59,10 @@ variable "user" {
 
 variable "domain" {
   default = "fatherfedor.shop"
+}
+
+variable "prefix" {
+  default = "nginx"
 }
 
 variable "aws_user_id" {

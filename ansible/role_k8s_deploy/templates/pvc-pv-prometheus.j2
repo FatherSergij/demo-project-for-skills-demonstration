@@ -1,0 +1,55 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: pvc-prometheus-data
+spec:
+  storageClassName: "" # Empty string must be explicitly set otherwise default StorageClass will be set
+  volumeName: pv-prometheus-data
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 4Gi
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: pv-prometheus-data
+spec:
+  accessModes:
+  - ReadWriteOnce
+  capacity:
+    storage: 4Gi
+  csi:
+    driver: ebs.csi.aws.com
+    fsType: ext4
+    volumeHandle: {{ volume_id_from_terraform }}
+#apiVersion: v1
+#kind: PersistentVolumeClaim
+#metadata:
+#  name: pvc-prometheus-data
+#spec:
+#  storageClassName: storage-ebs
+#  accessModes:
+#  - ReadWriteOnce
+#  resources:
+#    requests:
+#      storage: 4Gi
+#---
+#apiVersion: storage.k8s.io/v1
+#kind: StorageClass
+#metadata:
+#  name: storage-ebs
+#provisioner: ebs.csi.aws.com
+#volumeBindingMode: Immediate
+#reclaimPolicy: Delete
+##allowVolumeExpansion: true
+#parameters:
+#  csi.storage.k8s.io/fstype: ext4
+#  type: gp2
+#  tagSpecification_1: "pv=prometheus"
+##allowedTopologies:
+##- matchLabelExpressions:
+##  - key: topology.kubernetes.io/zone
+##    values:
+##    - eu-north-1a      
