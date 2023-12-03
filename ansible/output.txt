@@ -1,7 +1,6 @@
 
 
-Prometheus's address is 13.49.54.214:9090
-Grafana's address is 51.20.146.208:32000
+Prometheus's address is prometheus_addr:9090
+Grafana's address is 51.20.227.15:32000
 That's OK. Let's go nginx.fatherfedor.shop
-
 

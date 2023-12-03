@@ -38,8 +38,8 @@
     #sed -i "s/volume_id/$(sed '1!d' name_worker.txt)/" output.txt
     delegate_to: localhost
 
-  - name: Check update DNS Records
-    shell: while ! nslookup {{ prefix_from_terraform }}.{{ domain_from_terraform }}; do sleep 5; done
+  #- name: Check update DNS Records
+  #  shell: while ! nslookup {{ prefix_from_terraform }}.{{ domain_from_terraform }}; do sleep 5; done
   become: false
   #if run with become: true(in ansible.cfg) then %HOME will be /root and all run will be as root  
   when: "'ansible_master' in group_names" 

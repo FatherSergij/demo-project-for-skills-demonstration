@@ -5,7 +5,7 @@
 - import_tasks: 03_init_workers.yml
 - import_tasks: 04_cert_kudeadm.yml
 - import_tasks: 05_coredns_ingress_controller.yml
-- import_tasks: 06_build_image.yml
+#- import_tasks: 06_build_image.yml
 #- import_tasks: 07_deploy_app.yml
 - import_tasks: 08_prom_graf.yaml
 - import_tasks: 09_finish_work_earier.yaml

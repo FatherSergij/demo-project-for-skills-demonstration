@@ -100,8 +100,8 @@ data:
           "interval": "1",
           "options": {
             "colorMode": "value",
-            "graphMode": "area",
-            "justifyMode": "center",
+            "graphMode": "none",
+            "justifyMode": "auto",
             "orientation": "horizontal",
             "reduceOptions": {
               "calcs": [
@@ -149,7 +149,91 @@ data:
               }
             }
           ],
-          "transparent": true,
+          "type": "stat"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "P1809F7CD0C75ACF3"
+          },
+          "description": "System uptime",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "decimals": 1,
+              "mappings": [
+                {
+                  "options": {
+                    "match": "null",
+                    "result": {
+                      "text": "N/A"
+                    }
+                  },
+                  "type": "special"
+                }
+              ],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "s"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 2,
+            "w": 3,
+            "x": 3,
+            "y": 0
+          },
+          "hideTimeOverride": true,
+          "id": 11,
+          "links": [],
+          "maxDataPoints": 100,
+          "options": {
+            "colorMode": "none",
+            "graphMode": "none",
+            "justifyMode": "auto",
+            "orientation": "horizontal",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "textMode": "auto",
+            "wideLayout": true
+          },
+          "pluginVersion": "10.2.2",
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "P1809F7CD0C75ACF3"
+              },
+              "editorMode": "code",
+              "exemplar": false,
+              "expr": "node_time_seconds{node=\"$Node\"} - node_boot_time_seconds{node=\"$Node\"}",
+              "instant": true,
+              "intervalFactor": 1,
+              "range": false,
+              "refId": "A",
+              "step": 240
+            }
+          ],
+          "title": "Uptime",
           "type": "stat"
         },
         {
@@ -181,8 +265,8 @@ data:
           },
           "gridPos": {
             "h": 2,
-            "w": 13,
-            "x": 3,
+            "w": 7,
+            "x": 6,
             "y": 0
           },
           "id": 4,
@@ -224,6 +308,7 @@ data:
             "type": "prometheus",
             "uid": "P1809F7CD0C75ACF3"
           },
+          "description": "Busy state of all CPU cores together",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -426,7 +511,7 @@ data:
                 "uid": "P1809F7CD0C75ACF3"
               },
               "editorMode": "code",
-              "expr": "((node_memory_MemTotal_bytes{node=\"$Node\"} - node_memory_MemFree_bytes{node=\"$Node\"} - node_memory_MemAvailable_bytes{node=\"$Node\"}) / (node_memory_MemTotal_bytes{node=\"$Node\"} )) * 100",
+              "expr": "((node_memory_MemTotal_bytes{node=\"$Node\"} - node_memory_MemAvailable_bytes{node=\"$Node\"}) / (node_memory_MemTotal_bytes{node=\"$Node\"} )) * 100",
               "instant": false,
               "legendFormat": "__auto",
               "range": true,
@@ -880,8 +965,8 @@ data:
           {
             "current": {
               "selected": true,
-              "text": "worker01",
-              "value": "worker01"
+              "text": "worker02",
+              "value": "worker02"
             },
             "datasource": {
               "type": "prometheus",
@@ -917,4 +1002,4 @@ data:
       "uid": "a86ed0dd-de18-4fd2-bf56-fa640320b385",
       "version": 1,
       "weekStart": ""
-    }   
+    } 
