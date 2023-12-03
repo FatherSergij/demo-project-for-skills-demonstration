@@ -10,15 +10,15 @@
       ['.aws','.godaddy','.alert']
     ignore_errors: true
 
-  - name: Updating DNS Records in GoDaddy
-    become: false 
-    shell: |
-      curl -X PUT "https://api.godaddy.com/v1/domains/{{ domain_from_terraform }}/records/CNAME/*" \
-        -H "$(cat .godaddy/godaddy.txt)" \
-        -H "Content-Type: application/json" \
-        -H "$headers" \
-        -d "[ { \"data\": \"{{ nlb_dns_name_from_terraform }}\", \"ttl\": 600 } ]"
-    ignore_errors: true    
+  #- name: Updating DNS Records in GoDaddy
+  #  become: false 
+  #  shell: |
+  #    curl -X PUT "https://api.godaddy.com/v1/domains/{{ domain_from_terraform }}/records/CNAME/*" \
+  #      -H "$(cat .godaddy/godaddy.txt)" \
+  #      -H "Content-Type: application/json" \
+  #      -H "$headers" \
+  #      -d "[ { \"data\": \"{{ nlb_dns_name_from_terraform }}\", \"ttl\": 600 } ]"
+  #  ignore_errors: true    
 
   - name: Check init cluster k8s
     #if run with become: yes then command is going as root and will be error

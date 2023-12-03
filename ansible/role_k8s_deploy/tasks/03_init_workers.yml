@@ -21,7 +21,7 @@
         src: config
         dest: $HOME/.kube/config
 
-    - name: Copy config to workers from localhost for workers 
+    - name: Copy init-workers-script to workers from localhost for workers 
       copy:
         src: "{{ role_path }}/files/join_for_workers.sh"
         dest: $HOME/join_for_workers.sh

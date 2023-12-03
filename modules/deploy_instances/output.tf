@@ -6,6 +6,10 @@ output "workers_ip" {
   value = aws_eip.eip_workers[*].public_ip
 }
 
+output "workers_id" {
+  value = aws_instance.instance_workers[*].id
+}
+
 output "key_name" {
   value = aws_key_pair.generated_key.key_name
 }
@@ -18,6 +22,6 @@ output "user_from_ami" {
   value = data.aws_ami.ami_latest.name
 }
 
-output "nlb_dns_name" {
-  value = aws_elb.nlb.dns_name
+output "sg_id" {
+  value = aws_security_group.sg.id
 }

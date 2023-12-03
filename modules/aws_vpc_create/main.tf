@@ -24,7 +24,7 @@ resource "aws_subnet" "aws_subnet_my" {
   cidr_block              = var.subnet_cidr[count.index]
   map_public_ip_on_launch = true
   tags = {
-    Name = "subnet_${count.index+1}${var.my_name}"
+    Name = "subnet_0${count.index+1}_${var.my_name}"
   }
 }
 

@@ -1,0 +1,22 @@
+- name: Run in workers(Reload configuration of exporters - if you've run terraform already and not run destroy before)
+  block:
+  - name: Reload configuration of Prometheus
+    shell: for (( i=1; i<=5; i++)); do curl -X POST localhost:9090/-/reload; if [ $? == 0 ]; then break; fi; sleep 10; done
+    args:
+      executable: /usr/bin/bash
+    ignore_errors: true
+    #do 5 time with delay 10 seconds - wait to pod deploy
+    #if [ $? == 0 ] - if command didn't work successfully and pass 50 seconds this worker doesn't have this pod
+    #executable: /usr/bin/bash - default - /bin/sh - "for (( ))" doesn't work
+  - name: Reload configuration of Alertmanager
+    shell: for (( i=1; i<=2; i++)); do pgrep alertmanager | sudo xargs kill -HUP; if [ $? == 0 ]; then break; fi; sleep 10; done
+    args:
+      executable: /usr/bin/bash    
+    ignore_errors: true
+
+  - name: Reload configuration of Blackbox
+    shell: for (( i=1; i<=2; i++)); do pgrep blackbox | sudo xargs kill -HUP; if [ $? == 0 ]; then break; fi; sleep 10; done
+    args:
+      executable: /usr/bin/bash    
+    ignore_errors: true   
+  when: "'ansible_workers' in group_names"

@@ -1,0 +1,73 @@
+---
+- name: Deploy Prometheus, exporters and Grafana(run in master)
+  block:
+  - name: Create secret for Amazon Elastic Block Store (EBS) CSI driver
+    shell: |
+      kubectl delete secret aws-secret --namespace kube-system
+      key=$(sed -r '2!d;s/.*=//' .aws/credentials)
+      access_key=$(sed -r '3!d;s/.*=//' .aws/credentials)
+      kubectl create secret generic aws-secret \
+        --namespace kube-system \
+        --from-literal "key_id=${key}" \
+        --from-literal "access_key=${access_key}"
+    #sed - take 2 and 3 line and delete everything before "=" including "="
+    #need .aws/credentials(02_init_master.yml)
+
+  - name: Install Amazon Elastic Block Store (EBS) CSI driver(for Prometheus)
+    shell: kubectl apply -k "github.com/kubernetes-sigs/aws-ebs-csi-driver/deploy/kubernetes/overlays/stable/?ref=release-1.24"
+
+  - name: Copy files to master from localhost to deploy all
+    copy:
+      src: "{{item}}"
+      dest: $HOME/helm
+    with_items:
+      ['helm/alertmanager','helm/blackbox','helm/grafana','helm/node-exporter','helm/prometheus']      
+
+  - name: Generate pvc-pv-prometheus.yaml
+    template: 
+      src: pvc-pv-prometheus.j2
+      dest: $HOME/helm/prometheus/templates/pvc-pv-prometheus.yaml
+
+  - name: Prepare cm-prometheus-rule.yaml
+    shell: |
+      sed -i 's/prefix/{{ prefix_from_terraform }}/' $HOME/helm/prometheus/templates/cm-prometheus-rule.yaml
+      sed -i 's/domain/{{ domain_from_terraform }}/' $HOME/helm/prometheus/templates/cm-prometheus-rule.yaml
+
+  - name: Change app-password in cm-alert.yaml for email and token for Telegram
+    shell: |
+      sed -i "s/app-password/$(sed '1!d' \.alert\/secret-key.txt)/" helm/alertmanager/templates/cm-alert.yaml
+      sed -i "s/token-telegram/$(sed '2!d' \.alert\/secret-key.txt)/" helm/alertmanager/templates/cm-alert.yaml
+    #need .alert/secret-key.txt(02_init_master.yml)
+
+  - name: Run Prometheus
+    shell: |
+      cd helm/prometheus/
+      while ! helm upgrade --install -n monitoring --create-namespace prometheus .; do sleep 5; done
+
+  - name: Run Node exporter
+    shell: kubectl apply -f helm/node-exporter/node-exporter.yaml
+
+  - name: Run Kube-state-metrics
+    shell: |
+      helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+      helm repo update
+      helm upgrade --install -n monitoring kube-state-metrics prometheus-community/kube-state-metrics
+#      kubectl apply -f https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml
+
+  - name: Run Alertmanager
+    shell: |
+      cd helm/alertmanager/
+      helm upgrade --install -n monitoring alertmanager .
+
+  - name: Run Blackbox
+    shell: |
+      cd helm/blackbox/
+      helm upgrade --install -n monitoring blackbox .
+
+  - name: Run Grafana
+    shell: |
+      cd helm/grafana/
+      helm upgrade --install -n monitoring --create-namespace grafana .
+  become: false
+  #if run with become: true(in ansible.cfg) then %HOME will be /root and all run will be as root  
+  when: "'ansible_master' in group_names"  

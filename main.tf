@@ -24,6 +24,16 @@ module "deploy_instances" {
   path_for_ansible     = var.path_for_ansible
 }
 
+#module "deploy_nlb" {
+#  source               = "./modules/deploy_nlb"
+#  vpc_id               = module.aws_vpc_create.vpc_id
+#  subnet_id            = module.aws_vpc_create.subnet_id
+#  nm_worker            = var.numbers_instans_workers_deploy  
+#  my_name              = var.my_name
+#  workers_id           = module.deploy_instances.workers_id
+#  sg_id                = module.deploy_instances.sg_id
+#}
+
 locals {
   user_name = var.user[substr(module.deploy_instances.user_from_ami, 0, 4)] //Can do it as below
   //user_name = lookup(var.user, substr(module.deploy_instances.user_from_ami, 0, 4))  
@@ -64,7 +74,8 @@ resource "null_resource" "instance_deploy" {
   }
 
   provisioner "local-exec" {
-    command = "cd ansible/ && ansible-playbook -e 'region_from_terraform'=${var.region} -e 'nlb_dns_name_from_terraform'=${module.deploy_instances.nlb_dns_name} -e 'domain_from_terraform'=${var.domain} -e 'prefix_from_terraform'=${var.prefix} -e 'aws_user_id_from_terraform'=${var.aws_user_id} -e 'number_replicas_from_terraform'=${var.number_replicas_web} -e 'volume_id_from_terraform'=${module.aws_vpc_create.volume_id} main.yml"
+    #command = "cd ansible/ && ansible-playbook -e 'region_from_terraform'=${var.region} -e 'nlb_dns_name_from_terraform'=${module.deploy_nlb.nlb_dns_name} -e 'domain_from_terraform'=${var.domain} -e 'prefix_from_terraform'=${var.prefix} -e 'aws_user_id_from_terraform'=${var.aws_user_id} -e 'number_replicas_from_terraform'=${var.number_replicas_web} -e 'volume_id_from_terraform'=${module.aws_vpc_create.volume_id} main.yml"
+    command = "cd ansible/ && ansible-playbook -e 'region_from_terraform'=${var.region} -e 'domain_from_terraform'=${var.domain} -e 'prefix_from_terraform'=${var.prefix} -e 'aws_user_id_from_terraform'=${var.aws_user_id} -e 'number_replicas_from_terraform'=${var.number_replicas_web} -e 'volume_id_from_terraform'=${module.aws_vpc_create.volume_id} main.yml"    
   }
 }
 

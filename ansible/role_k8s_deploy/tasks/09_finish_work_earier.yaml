@@ -1,0 +1,45 @@
+---
+- name: Finish the work ran earlier
+  block:
+  #This need if we use SrorageClass in pvc-pv-prometheus.j2(yaml)
+  #- name: Set DeleteOnTermination in "true" on volume created of Prometheus to be one will delete when we run command terraform destroy
+  #  #if this command doesn't run you need to delete the volume in AWS manually
+  #  shell: |
+  #    while ! aws ec2 modify-instance-attribute --instance-id \
+  #      $(aws ec2 describe-volumes --filters Name=tag:pv,Values=prometheus --query 'Volumes[0].Attachments[0].InstanceId' --output text --region {{ region_from_terraform }}) \
+  #      --block-device-mappings "[{\"DeviceName\": \
+  #      \"$(aws ec2 describe-volumes --filters Name=tag:pv,Values=prometheus --query 'Volumes[0].Attachments[0].Device' --output text --region {{ region_from_terraform }})\",\
+  #      \"Ebs\":{\"DeleteOnTermination\":true}}]" --region {{ region_from_terraform }}; do sleep 5; done
+
+  - name: Approve CSRs(to see 04_cert_kudeadm.yml)
+    shell: for csr_name in $(kubectl get csr | grep -i pending | awk '{print $1}'); do kubectl certificate approve $csr_name; done
+
+  - name: Get ip addresses of workers where running Prometheus #and volume ID created of Prometheus
+    shell: |
+      echo $(kubectl get po $(kubectl get po -A | grep prometheus | awk '{print $2}') -n monitoring -o jsonpath='{.spec.nodeName}') >> name_worker.txt
+      echo $(kubectl get po $(kubectl get po -A | grep grafana | awk '{print $2}') -n monitoring -o jsonpath='{.spec.nodeName}') >> name_worker.txt
+    #echo $(aws ec2 describe-volumes --filters Name=tag:pv,Values=prometheus --query "Volumes[0].VolumeId" --output text --region {{ region_from_terraform }}) > name_worker.txt
+
+  - name: Copy name_worker.txt from master to localhost
+    become: false
+    fetch:
+      src: $HOME/name_worker.txt
+      dest: name_worker.txt
+      flat: yes 
+
+  - name: Create output file with ip addresses of workers where running Prometheus and domain name #, volume ID created of Prometheus
+    shell: |
+      cp {{ role_path }}/files/output.txt output.txt
+      prom=$(sed -n 's/^'"$(sed '1!d' name_worker.txt)"'.*=//p' hosts)
+      sed -i "s/prometheus_addr/$prom/" output.txt
+      graf=$(sed -n 's/^'"$(sed '2!d' name_worker.txt)"'.*=//p' hosts)
+      sed -i "s/grafana_addr/$graf/" output.txt
+      sed -i "s/domain/{{ prefix_from_terraform }}.{{ domain_from_terraform }}/" output.txt
+    #sed -i "s/volume_id/$(sed '1!d' name_worker.txt)/" output.txt
+    delegate_to: localhost
+
+  - name: Check update DNS Records
+    shell: while ! nslookup {{ prefix_from_terraform }}.{{ domain_from_terraform }}; do sleep 5; done
+  become: false
+  #if run with become: true(in ansible.cfg) then %HOME will be /root and all run will be as root  
+  when: "'ansible_master' in group_names" 
