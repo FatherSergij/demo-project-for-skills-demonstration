@@ -75,7 +75,7 @@ data:
           module: [http_2xx]
         static_configs:
           - targets:
-            - https://nginx.fatherfedor.shop
+            - https://prefix.domain
             - https://example.com
         relabel_configs:
           - source_labels: [__address__]

@@ -13,7 +13,7 @@
   #- name: Updating DNS Records in GoDaddy
   #  become: false 
   #  shell: |
-  #    curl -X PUT "https://api.godaddy.com/v1/domains/{{ domain_from_terraform }}/records/CNAME/*" \
+  #    curl -X PUT "https://api.godaddy.com/v1/domains/{{ domain_from_terraform }}/records/CNAME/{{ prefix_from_terraform }}" \
   #      -H "$(cat .godaddy/godaddy.txt)" \
   #      -H "Content-Type: application/json" \
   #      -H "$headers" \

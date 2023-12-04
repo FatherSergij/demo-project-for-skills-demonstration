@@ -33,6 +33,11 @@
       sed -i 's/prefix/{{ prefix_from_terraform }}/' $HOME/helm/prometheus/templates/cm-prometheus-rule.yaml
       sed -i 's/domain/{{ domain_from_terraform }}/' $HOME/helm/prometheus/templates/cm-prometheus-rule.yaml
 
+  - name: Prepare cm-prometheus.yaml
+    shell: |
+      sed -i 's/prefix/{{ prefix_from_terraform }}/' $HOME/helm/prometheus/templates/cm-prometheus.yaml
+      sed -i 's/domain/{{ domain_from_terraform }}/' $HOME/helm/prometheus/templates/cm-prometheus.yaml
+
   - name: Change app-password in cm-alert.yaml for email and token for Telegram
     shell: |
       sed -i "s/app-password/$(sed '1!d' \.alert\/secret-key.txt)/" helm/alertmanager/templates/cm-alert.yaml
