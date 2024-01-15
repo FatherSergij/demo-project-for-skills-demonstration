@@ -48,4 +48,4 @@ export AWS_SECRET_ACCESS_KEY=<br />
 - variables.tf - all necessary parameters
 - ansible/role_k8s_deploy/files/.aws/credentials - [keys](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html) for your account AWS, needed for work with ECR AWS and secret for Amazon Elastic Block Store (EBS) CSI driver
 - ansible/role_k8s_deploy/files/.godaddy/godaddy.txt - [key](https://developer.godaddy.com/keys) for your account GoDaddy.com, needed for update DNS Record
-
+- ansible/role_k8s_deploy/files/.alert/secret-key.txt - [app-password](https://support.google.com/mail/answer/185833?hl=en) for email and token(ansible/role_k8s_deploy/files/.alert/alert-telergram.txt) for Telegram
