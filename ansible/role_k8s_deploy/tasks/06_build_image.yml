@@ -5,10 +5,10 @@
       src: nginx_phpfpm
       dest: $HOME
 
-  - name: Copy AWS credentials to master
-    copy:
-      src: .aws/
-      dest: ~/.aws/
+  #- name: Copy AWS credentials to master
+  #  copy:
+  #    src: .aws/
+  #    dest: ~/.aws/
 
   - name: Install AWS CLI
     become: true

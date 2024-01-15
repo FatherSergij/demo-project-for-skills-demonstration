@@ -6,14 +6,14 @@ metadata:
 data:
   alert.yml: |
     groups:
-    - name: demo alert
+    - name: alert down
       rules:  
-      - alert: kube-state-metrics-down
-        expr: up{instance="https://prefix.domain"} == 0
+      - alert: blackbox-alert
+        expr: probe_success{instance="https://prefix.domain"} == 0
         for: 0m
         labels:
           severity: critical
         annotations:
-          title: "kube-state-metrics is down"
-          summary: kube-state-metrics job missing (instance {{ "{{" }} $labels.instance {{ "}}" }}) VALUE = {{ "{{" }} $value {{ "}}" }} LABELS = {{ "{{" }} $labels {{ "}}" }}
-          description: "kube-state-metrics doesn't return any metrics. An exporter might be crashed."
+          title: "https://prefix.domain is down"
+          summary: https://prefix.domain job missing (instance {{ "{{" }} $labels.instance {{ "}}" }}) VALUE = {{ "{{" }} $value {{ "}}" }} LABELS = {{ "{{" }} $labels {{ "}}" }}
+          description: "https://prefix.domain doesn't return any metrics. The site might be crashed."

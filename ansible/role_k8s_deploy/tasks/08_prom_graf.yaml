@@ -30,8 +30,8 @@
 
   - name: Prepare cm-prometheus-rule.yaml
     shell: |
-      sed -i 's/prefix/{{ prefix_from_terraform }}/' $HOME/helm/prometheus/templates/cm-prometheus-rule.yaml
-      sed -i 's/domain/{{ domain_from_terraform }}/' $HOME/helm/prometheus/templates/cm-prometheus-rule.yaml
+      sed -i 's/prefix/{{ prefix_from_terraform }}/g' $HOME/helm/prometheus/templates/cm-prometheus-rule.yaml
+      sed -i 's/domain/{{ domain_from_terraform }}/g' $HOME/helm/prometheus/templates/cm-prometheus-rule.yaml
 
   - name: Prepare cm-prometheus.yaml
     shell: |

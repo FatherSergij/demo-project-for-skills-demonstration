@@ -3,7 +3,7 @@ kind: ConfigMap
 metadata:
   name: alertmanager-config
 data:
-#receivers have the same matches, so you need to specify continue: true option
+#receivers have the same matches, so you need to specify "continue: true" option
   config.yml: |
     global:
     route:
